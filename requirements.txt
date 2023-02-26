@@ -1,2 +1,4 @@
 pyserial
+smbus
+touchphat
 

@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-import signal
 import time
-
 import touchphat
 
 def access_granted():
