@@ -4,7 +4,7 @@
 #dmesg | grep "tty" to find port name
 
 ### CONFIGURATION ##################################
-RELEASE_MODE = False
+RELEASE_MODE = True
 ### END CONFIGURATION ##############################
 
 import os
@@ -44,7 +44,7 @@ COL_RESET = "\033[0m"
 
 ### Serial Management ##############################
 def find_serial_dev():
-    dev = ["/dev/ttyAMA0", "/dev/ttyUSB0"]
+    dev = ["/dev/ttyUSB0"]
     for d in dev:
         if os.path.exists(d):
             return d
