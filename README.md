@@ -2,6 +2,7 @@
 # Pre-requisite
 
 ## Pi Zero
+
 ```shell
 sudo apt-get install python3 python3-venv
 #sudo systemctl mask serial-getty@ttyAMA0.service   # it appears it was not needed
