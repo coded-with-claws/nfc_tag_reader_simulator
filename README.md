@@ -38,3 +38,7 @@ crontab -e
 @reboot python ~/nfc_tag_reader_simulator/nfc_tag_reader_simulator.py
 ```
 
+## Touch pHat (optional)
+
+Plugged on GPIO pins.
+
