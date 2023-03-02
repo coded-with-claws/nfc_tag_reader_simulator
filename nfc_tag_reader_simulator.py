@@ -4,7 +4,7 @@
 #dmesg | grep "tty" to find port name
 
 ### CONFIGURATION ##################################
-RELEASE_MODE = True
+TOUCHPHAT = True
 ### END CONFIGURATION ##############################
 
 import logging
@@ -13,7 +13,7 @@ import serial
 import re
 import time
 
-if RELEASE_MODE:
+if TOUCHPHAT:
     import touchphat
 
 #class ReadLine:
@@ -44,6 +44,13 @@ ALLOWED_TAGS = ["2391729211"]
 COL_GREEN = "\x1b[38;5;2m"
 COL_RED = "\x1b[38;5;1m"
 COL_RESET = "\033[0m"
+
+### BOOT ###########################################
+def startup():
+    led_enter_on_off_touchphat()
+    led_back_blink_touchphat()
+
+### END BOOT ######################################
 
 ### Serial Management ##############################
 def find_serial_dev():
@@ -77,29 +84,29 @@ def allow_tag(tag):
 def validate(tag):
     if tag in ALLOWED_TAGS:
         logging.info(f"{COL_GREEN}ACCESS GRANTED!{COL_RESET}")
-        if RELEASE_MODE:
-            access_granted()
+        if TOUCHPHAT:
+            access_granted_touchphat()
     else:
         logging.info(f"{COL_RED}ACCESS DENIED!{COL_RESET}")
-        if RELEASE_MODE:
-            access_denied()
+        if TOUCHPHAT:
+            access_denied_touchphat()
 
 ### END Tag Management #################################
 
-### LED Management #################################
+### LED Management - Touch pHat #################################
 
-def access_granted():
-    led_enter_on_off()
+def access_granted_touchphat():
+    led_enter_on_off_touchphat()
 
-def access_denied():
-    led_back_blink()
+def access_denied_touchphat():
+    led_back_blink_touchphat()
 
-def led_enter_on_off():
+def led_enter_on_off_touchphat():
     touchphat.set_led('Enter', True)
     time.sleep(1)
     touchphat.set_led('Enter', False)
 
-def led_back_blink():
+def led_back_blink_touchphat():
     touchphat.set_led('Back', True)
     time.sleep(0.1)
     touchphat.set_led('Back', False)
@@ -112,18 +119,17 @@ def led_back_blink():
     time.sleep(0.1)
     touchphat.set_led('Back', False)
 
-### END LED Management #################################
+### END LED Management - Touch pHat #################################
 
 ### MAIN ###############################################
 if __name__ == '__main__':
     
-    #time.sleep(15)
+    startup()
     tty_dev = find_serial_dev()
     if tty_dev is None:
         logging.info("No serial device found")
         exit(-1)
 
-    #os.system("sudo systemctl mask serial-getty@ttyAMA0.service")
     os.system(f"sudo chmod 666 {tty_dev}")
     logging.info('Running. Press CTRL-C to exit.')
     with serial.Serial(tty_dev, 9600, timeout=1) as arduino:
