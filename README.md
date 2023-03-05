@@ -42,3 +42,9 @@ crontab -e
 
 Plugged on GPIO pins.
 
+## LEDs (optional)
+
+Plug LEDs:
+- a red LED on GPIO17 (pin 11)
+- a green LED on GPIO27 (pin 13)
+

@@ -4,7 +4,10 @@
 #dmesg | grep "tty" to find port name
 
 ### CONFIGURATION ##################################
-TOUCHPHAT = True
+TOUCHPHAT = False
+LEDs = True
+GPIO_REDLED = 17
+GPIO_GREENLED = 27
 ### END CONFIGURATION ##############################
 
 import logging
@@ -15,6 +18,9 @@ import time
 
 if TOUCHPHAT:
     import touchphat
+
+if LEDs:
+    from gpiozero import LED
 
 #class ReadLine:
 #    def __init__(self, s):
@@ -47,8 +53,11 @@ COL_RESET = "\033[0m"
 
 ### BOOT ###########################################
 def startup():
-    led_enter_on_off_touchphat()
-    led_back_blink_touchphat()
+    if TOUCHPHAT:
+        led_enter_on_off_touchphat()
+        led_back_blink_touchphat()
+    if LEDs:
+        startup_leds()
 
 ### END BOOT ######################################
 
@@ -86,10 +95,14 @@ def validate(tag):
         logging.info(f"{COL_GREEN}ACCESS GRANTED!{COL_RESET}")
         if TOUCHPHAT:
             access_granted_touchphat()
+        if LEDs:
+            access_granted_leds()
     else:
         logging.info(f"{COL_RED}ACCESS DENIED!{COL_RESET}")
         if TOUCHPHAT:
             access_denied_touchphat()
+        if LEDs:
+            access_denied_leds()
 
 ### END Tag Management #################################
 
@@ -120,6 +133,35 @@ def led_back_blink_touchphat():
     touchphat.set_led('Back', False)
 
 ### END LED Management - Touch pHat #################################
+
+### LED Management -LEDs #################################
+def startup_leds():
+    led_enter_on_off('red', 1)
+    led_enter_on_off('green', 1)
+    led_enter_on_off('both', 1)
+
+def led_enter_on_off(leds, duration):
+    redled = LED(GPIO_REDLED)
+    greenled = LED(GPIO_GREENLED)
+    if leds in ('red', 'both'):
+        redled.on()
+    if leds in ('green', 'both'):
+        greenled.on()
+    time.sleep(duration)
+    if leds in ('red', 'both'):
+        redled.off()
+    if leds in ('green', 'both'):
+        greenled.off()
+
+def access_granted_leds():
+    led_enter_on_off('green', 3)
+
+def access_denied_leds():
+    for i in range(8):
+        led_enter_on_off('red', 0.2)
+        time.sleep(0.2)
+
+### END LED Management -LEDs #################################
 
 ### MAIN ###############################################
 if __name__ == '__main__':
