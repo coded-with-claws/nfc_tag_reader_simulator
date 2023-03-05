@@ -3,6 +3,7 @@
 
 ## Pi Zero
 
+As user `pi`:
 ```shell
 sudo apt-get install python3 python3-venv
 #sudo systemctl mask serial-getty@ttyAMA0.service   # it appears it was not needed
@@ -51,4 +52,14 @@ Plug LEDs:
 ## Buzzer (optional)
 
 Plug the buzzer on GPIO22 (pin 15).
+
+## OLED screen (optional)
+
+Follow install instructions on https://github.com/mklements/OLED_Stats
+
+Plug SSD1306:
+- OLED VCC on 3V3 (pin 1 on Pi Zero)
+- OLED SDA on SDA1 (pin 3)
+- OLED SCL on SCL1 (pin 5)
+- OLED GND on GND (pin 9)
 

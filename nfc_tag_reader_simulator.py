@@ -5,11 +5,14 @@
 
 ### CONFIGURATION ##################################
 TOUCHPHAT = False
-LEDs = True
+LEDs = False
 GPIO_REDLED = 17
 GPIO_GREENLED = 27
-BUZZER = True
+BUZZER = False
 GPIO_BUZZER = 22
+OLED_SCREEN = True
+SCREEN_WIDTH = 128
+SCREEN_HEIGHT = 64
 ### END CONFIGURATION ##############################
 
 import logging
@@ -28,34 +31,23 @@ if LEDs:
 if BUZZER:
     from gpiozero import Buzzer
 
-#class ReadLine:
-#    def __init__(self, s):
-#        self.buf = bytearray()
-#        self.s = s
-#    
-#    def readline(self):
-#        i = self.buf.find(b"\n")
-#        if i >= 0:
-#            r = self.buf[:i+1]
-#            self.buf = self.buf[i+1:]
-#            return r
-#        while True:
-#            i = max(1, min(2048, self.s.in_waiting))
-#            data = self.s.read(i)
-#            i = data.find(b"\n")
-#            if i >= 0:
-#                r = self.buf + data[:i+1]
-#                self.buf[0:] = data[i+1:]
-#                return r
-#            else:
-#                self.buf.extend(data)
+if OLED_SCREEN:
+    import board
+    import digitalio
+    from PIL import Image, ImageDraw, ImageFont
+    import adafruit_ssd1306
+    oled = None
 
+
+### LOG ############################################
 logging.basicConfig(filename='nfc_tag_reader_simulator.log', encoding='utf-8', level=logging.DEBUG)
 
 ALLOWED_TAGS = ["2391729211"]
 COL_GREEN = "\x1b[38;5;2m"
 COL_RED = "\x1b[38;5;1m"
 COL_RESET = "\033[0m"
+
+### END LOG ######################################
 
 ### BOOT ###########################################
 def startup():
@@ -64,6 +56,9 @@ def startup():
         led_back_blink_touchphat()
     if LEDs:
         startup_leds()
+    if OLED_SCREEN:
+        startup_screen()
+        screen_draw(None)
 
 ### END BOOT ######################################
 
@@ -107,8 +102,19 @@ def validate(tag):
         if BUZZER:
             t_buzz = Thread(target=access_granted_buzzer)
             t_buzz.start()
-        t_led.join()
-        t_buzz.join()
+        if OLED_SCREEN:
+            t_screen = Thread(target=screen_draw, args=("GRANTED",))
+            t_screen.start()
+        if LEDs:
+            t_led.join()
+        if BUZZER:
+            t_buzz.join()
+        if OLED_SCREEN:
+            t_screen.join()
+            # wait some time to read the screen in case there was no LED / Buzzer management
+            if not LEDs and not BUZZER:
+                time.sleep(3)
+            screen_draw(None)
     else:
         logging.info(f"{COL_RED}ACCESS DENIED!{COL_RESET}")
         if TOUCHPHAT:
@@ -119,8 +125,19 @@ def validate(tag):
         if BUZZER:
             t_buzz = Thread(target=access_denied_buzzer)
             t_buzz.start()
-        t_led.join()
-        t_buzz.join()
+        if OLED_SCREEN:
+            t_screen = Thread(target=screen_draw, args=("DENIED",))
+            t_screen.start()
+        if LEDs:
+            t_led.join()
+        if BUZZER:
+            t_buzz.join()
+        if OLED_SCREEN:
+            t_screen.join()
+            # wait some time to read the screen in case there was no LED / Buzzer management
+            if not LEDs and not BUZZER:
+                time.sleep(3)
+            screen_draw(None)
 
 ### END Tag Management #################################
 
@@ -181,7 +198,7 @@ def access_denied_leds():
 
 ### END LED Management -LEDs #################################
 
-###| BUZZER Management -LEDs #################################
+### BUZZER Management #################################
 def buzzer_on_off(duration):
     buzzer = Buzzer(GPIO_BUZZER)
     buzzer.on()
@@ -196,7 +213,45 @@ def access_denied_buzzer():
         buzzer_on_off(0.5)
         time.sleep(0.5)
 
-### ENDBUZZER Management  #################################
+### END BUZZER Management  #################################
+
+### SCREEN Management #################################
+def startup_screen():
+    global oled
+    oled_reset = digitalio.DigitalInOut(board.D4)
+    i2c = board.I2C()
+    oled = adafruit_ssd1306.SSD1306_I2C(SCREEN_WIDTH, SCREEN_HEIGHT, i2c, addr=0x3C, reset=oled_reset)
+    screen_empty()
+
+def screen_empty():
+    global oled
+
+    oled.fill(0)
+    oled.show()
+
+def screen_draw(access):
+    global oled
+
+    if access:
+        status_msg = access
+    else:
+        status_msg = "WAITING"
+
+    image = Image.new("1", (oled.width, oled.height))
+    draw = ImageDraw.Draw(image)
+    draw.rectangle((0, 0, oled.width, oled.height), outline=255, fill=255)
+    font = ImageFont.truetype('/home/pi/nfc_tag_reader_simulator/resources/PixelOperator.ttf', 16)
+
+    draw.rectangle((0, 0, oled.width, oled.height), outline=0, fill=0)
+    draw.text((0, 0), "ACCESS CONTROL", font=font, fill=255)
+    #draw.text((0, 16), "", font=font, fill=255)
+    draw.text((0, 32), status_msg, font=font, fill=255)
+    #draw.text((0, 48), "", font=font, fill=255)
+
+    oled.image(image)
+    oled.show()
+
+### END SCREEN Management  #################################
 
 ### MAIN ###############################################
 if __name__ == '__main__':
@@ -229,4 +284,6 @@ if __name__ == '__main__':
                         process_rfid(answer.decode("ascii"))
             except KeyboardInterrupt:
                 logging.info("KeyboardInterrupt has been caught.")
+                if OLED_SCREEN:
+                    screen_empty()
 
