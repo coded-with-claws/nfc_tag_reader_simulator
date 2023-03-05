@@ -8,6 +8,8 @@ TOUCHPHAT = False
 LEDs = True
 GPIO_REDLED = 17
 GPIO_GREENLED = 27
+BUZZER = True
+GPIO_BUZZER = 22
 ### END CONFIGURATION ##############################
 
 import logging
@@ -15,12 +17,16 @@ import os
 import serial
 import re
 import time
+from threading import Thread
 
 if TOUCHPHAT:
     import touchphat
 
 if LEDs:
     from gpiozero import LED
+
+if BUZZER:
+    from gpiozero import Buzzer
 
 #class ReadLine:
 #    def __init__(self, s):
@@ -96,13 +102,25 @@ def validate(tag):
         if TOUCHPHAT:
             access_granted_touchphat()
         if LEDs:
-            access_granted_leds()
+            t_led = Thread(target=access_granted_leds)
+            t_led.start()
+        if BUZZER:
+            t_buzz = Thread(target=access_granted_buzzer)
+            t_buzz.start()
+        t_led.join()
+        t_buzz.join()
     else:
         logging.info(f"{COL_RED}ACCESS DENIED!{COL_RESET}")
         if TOUCHPHAT:
             access_denied_touchphat()
         if LEDs:
-            access_denied_leds()
+            t_led = Thread(target=access_denied_leds)
+            t_led.start()
+        if BUZZER:
+            t_buzz = Thread(target=access_denied_buzzer)
+            t_buzz.start()
+        t_led.join()
+        t_buzz.join()
 
 ### END Tag Management #################################
 
@@ -162,6 +180,23 @@ def access_denied_leds():
         time.sleep(0.2)
 
 ### END LED Management -LEDs #################################
+
+###| BUZZER Management -LEDs #################################
+def buzzer_on_off(duration):
+    buzzer = Buzzer(GPIO_BUZZER)
+    buzzer.on()
+    time.sleep(duration)
+    buzzer.off()
+
+def access_granted_buzzer():
+    buzzer_on_off(1)
+
+def access_denied_buzzer():
+    for i in range(3):
+        buzzer_on_off(0.5)
+        time.sleep(0.5)
+
+### ENDBUZZER Management  #################################
 
 ### MAIN ###############################################
 if __name__ == '__main__':

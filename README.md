@@ -46,5 +46,9 @@ Plugged on GPIO pins.
 
 Plug LEDs:
 - a red LED on GPIO17 (pin 11)
-- a green LED on GPIO27 (pin 13)
+- a green LED on GPIO27 (pin 13).
+
+## Buzzer (optional)
+
+Plug the buzzer on GPIO22 (pin 15).
 
