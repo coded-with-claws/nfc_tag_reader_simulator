@@ -8,9 +8,9 @@ TOUCHPHAT = False
 LEDs = False
 GPIO_REDLED = 17
 GPIO_GREENLED = 27
-BUZZER = False
+BUZZER = True
 GPIO_BUZZER = 22
-OLED_SCREEN = True
+OLED_SCREEN = False
 SCREEN_WIDTH = 128
 SCREEN_HEIGHT = 64
 ### END CONFIGURATION ##############################
@@ -206,11 +206,11 @@ def buzzer_on_off(duration):
     buzzer.off()
 
 def access_granted_buzzer():
-    buzzer_on_off(1)
+    buzzer_on_off(0.5)
 
 def access_denied_buzzer():
     for i in range(3):
-        buzzer_on_off(0.5)
+        buzzer_on_off(1)
         time.sleep(0.5)
 
 ### END BUZZER Management  #################################
