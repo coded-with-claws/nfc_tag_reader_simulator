@@ -10,9 +10,10 @@ GPIO_REDLED = 17
 GPIO_GREENLED = 27
 BUZZER = True
 GPIO_BUZZER = 22
-OLED_SCREEN = False
+OLED_SCREEN = True
 SCREEN_WIDTH = 128
 SCREEN_HEIGHT = 64
+SCREEN_OFFSET = 4
 ### END CONFIGURATION ##############################
 
 import logging
@@ -191,10 +192,10 @@ def led_enter_on_off(leds, duration):
         greenled.off()
 
 def access_granted_leds():
-    led_enter_on_off('green', 3)
+    led_enter_on_off('green', 2)
 
 def access_denied_leds():
-    for i in range(8):
+    for i in range(10):
         led_enter_on_off('red', 0.2)
         time.sleep(0.2)
 
@@ -231,6 +232,9 @@ def screen_empty():
     oled.fill(0)
     oled.show()
 
+def screen_offset(text):
+    return " " * SCREEN_OFFSET + str(text)
+
 def screen_draw(access):
     global oled
 
@@ -238,6 +242,7 @@ def screen_draw(access):
         status_msg = access
     else:
         status_msg = "WAITING"
+    status_msg = screen_offset(status_msg)
 
     image = Image.new("1", (oled.width, oled.height))
     draw = ImageDraw.Draw(image)
@@ -245,7 +250,7 @@ def screen_draw(access):
     font = ImageFont.truetype('/home/pi/nfc_tag_reader_simulator/resources/PixelOperator.ttf', 16)
 
     draw.rectangle((0, 0, oled.width, oled.height), outline=0, fill=0)
-    draw.text((0, 0), "ACCESS CONTROL", font=font, fill=255)
+    draw.text((0, 0), screen_offset("ACCESS CONTROL"), font=font, fill=255)
     #draw.text((0, 16), "", font=font, fill=255)
     draw.text((0, 32), status_msg, font=font, fill=255)
     #draw.text((0, 48), "", font=font, fill=255)
