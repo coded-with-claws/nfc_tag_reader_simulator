@@ -5,7 +5,7 @@
 
 ### CONFIGURATION ##################################
 TOUCHPHAT = False
-LEDs = False
+LEDs = True
 GPIO_REDLED = 17
 GPIO_GREENLED = 27
 BUZZER = True
@@ -59,6 +59,8 @@ def startup():
     if OLED_SCREEN:
         startup_screen()
         screen_draw(None)
+    if BUZZER:
+        access_granted_buzzer()
 
 ### END BOOT ######################################
 
