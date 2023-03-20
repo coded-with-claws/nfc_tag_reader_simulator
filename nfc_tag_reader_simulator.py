@@ -192,12 +192,15 @@ def led_enter_on_off(leds, duration):
         greenled.off()
 
 def access_granted_leds():
-    led_enter_on_off('green', 2)
+    led_enter_on_off('green', 1)
 
 def access_denied_leds():
-    for i in range(10):
-        led_enter_on_off('red', 0.2)
-        time.sleep(0.2)
+#    for i in range(10):
+#        led_enter_on_off('red', 0.2)
+#        time.sleep(0.2)
+    for i in range(3):
+        led_enter_on_off('red', 0.8)
+        time.sleep(0.4)
 
 ### END LED Management -LEDs #################################
 
@@ -209,12 +212,14 @@ def buzzer_on_off(duration):
     buzzer.off()
 
 def access_granted_buzzer():
-    buzzer_on_off(0.5)
+    buzzer_on_off(0.1)
+    time.sleep(0.1)
+    buzzer_on_off(0.1)
 
 def access_denied_buzzer():
     for i in range(3):
-        buzzer_on_off(1)
-        time.sleep(0.5)
+        buzzer_on_off(0.8)
+        time.sleep(0.4)
 
 ### END BUZZER Management  #################################
 
