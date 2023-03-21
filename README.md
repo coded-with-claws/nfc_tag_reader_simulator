@@ -31,12 +31,12 @@ crontab -e
 
 ## With venv
 ```shell
-@reboot ~/nfc_tag_reader_simulator/venv/bin/python ~/nfc_tag_reader_simulator/nfc_tag_reader_simulator.py
+@reboot while true; do ~/nfc_tag_reader_simulator/venv/bin/python ~/nfc_tag_reader_simulator/nfc_tag_reader_simulator.py; sleep 10; done
 ```
 
 ## Without venv
 ```shell
-@reboot python ~/nfc_tag_reader_simulator/nfc_tag_reader_simulator.py
+@reboot while true; do python ~/nfc_tag_reader_simulator/nfc_tag_reader_simulator.py; sleep 10; done
 ```
 
 ## Touch pHat (optional)
