@@ -18,6 +18,6 @@ In Fritzing, import `AdaFruit.fzbz` file and the browse for the component on you
 
 Open the Diagram :
 
-<img src="https://github.com/coded-with-claws/nfc_tag_reader_simulator/blob/main/Electronics/Fritzing/Adafruit_Database_Component.png"/>
+<img src="https://github.com/coded-with-claws/nfc_tag_reader_simulator/blob/main/Electronics/Fritzing/Fritzing_Example.png"/>
 
 
