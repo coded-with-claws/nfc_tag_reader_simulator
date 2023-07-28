@@ -1,9 +1,11 @@
 
-# Pre-requisite
+# POC
 
 ## Tag Reader project
 
 <img src="https://github.com/coded-with-claws/nfc_tag_reader_simulator/blob/main/Electronics/Fritzing/POC_tag_reader.gif" width="40" height="40" />
+
+# Pre-requisite
 
 ## Pi Zero
 
