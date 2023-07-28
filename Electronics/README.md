@@ -16,7 +16,7 @@ Follow this tutorial --> https://cdn-learn.adafruit.com/downloads/pdf/using-the-
 
 Download the Adafruit Component Database : https://github.com/adafruit/Fritzing-Library
 
-In Fritzing, import `AdaFruit.fzbz` file and the browse for the component on your choice.
+In Fritzing, import `AdaFruit.fzbz` to get all necessary electronic components from Adafruit datanase.
 
 <img src="https://github.com/coded-with-claws/nfc_tag_reader_simulator/blob/main/Electronics/Fritzing/Adafruit_Database_Component.png"/>
 
