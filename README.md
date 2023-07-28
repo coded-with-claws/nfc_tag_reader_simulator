@@ -3,7 +3,7 @@
 
 ## Tag Reader project
 
-<img src="https://github.com/coded-with-claws/nfc_tag_reader_simulator/blob/main/Electronics/Fritzing/2.Tag_Reader_POC.jpg"/>
+<img src="https://github.com/coded-with-claws/nfc_tag_reader_simulator/blob/main/Electronics/Fritzing/POC_tag_reader.gif" width="40" height="40" />
 
 ## Pi Zero
 
@@ -66,4 +66,8 @@ Plug SSD1306:
 - OLED SDA on SDA1 (pin 3)
 - OLED SCL on SCL1 (pin 5)
 - OLED GND on GND (pin 9)
+
+## POC ** Under Dev **
+
+<img src="https://github.com/coded-with-claws/nfc_tag_reader_simulator/blob/main/Electronics/Fritzing/2.Tag_Reader_POC.jpg"/>
 
