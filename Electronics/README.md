@@ -7,7 +7,7 @@ Diagrams projects have been made by 'Fritzing' Software : https://fritzing.org/
 [Install Fritzing] --> 0.9.6
 
 ```shell
-sudo apt install -l fritzing
+sudo apt install -y fritzing
 ```
 
 -----------------
@@ -35,6 +35,8 @@ Open the Diagram `Electronic_diagram_tag_reader.fzz`
 
 -----------------
 
+## Arduino Nano Diagram
+
 <img src="https://github.com/coded-with-claws/nfc_tag_reader_simulator/blob/main/Electronics/Fritzing/2_Arduino_Nano_V3_RFID_RC522.png"/>
 
-## Arduino Nano Diagram
+
