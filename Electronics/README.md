@@ -1,3 +1,7 @@
+# Electronics diagmras
+
+## Fritzing Use
+
 Diagrams projects have been made by 'Fritzing' Software : https://fritzing.org/
 
 [Install Fritzing] --> 0.9.6
@@ -16,7 +20,7 @@ In Fritzing, import `AdaFruit.fzbz` file and the browse for the component on you
 
 <img src="https://github.com/coded-with-claws/nfc_tag_reader_simulator/blob/main/Electronics/Fritzing/Adafruit_Database_Component.png"/>
 
-Open the Diagram :
+Open the Diagram `Electronic_diagram_tag_reader.fzz`
 
 <img src="https://github.com/coded-with-claws/nfc_tag_reader_simulator/blob/main/Electronics/Fritzing/Fritzing_Example.png"/>
 
