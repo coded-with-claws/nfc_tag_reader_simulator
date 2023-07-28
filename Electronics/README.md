@@ -39,4 +39,8 @@ Open the Diagram `Electronic_diagram_tag_reader.fzz`
 
 <img src="https://github.com/coded-with-claws/nfc_tag_reader_simulator/blob/main/Electronics/Fritzing/2_Arduino_Nano_V3_RFID_RC522.png"/>
 
+-----------------
 
+## Tag Reader projects
+
+<img src="https://github.com/coded-with-claws/nfc_tag_reader_simulator/blob/main/Electronics/Fritzing/1.Tag_Reader_POC.jpg"/>

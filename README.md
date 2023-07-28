@@ -1,6 +1,10 @@
 
 # Pre-requisite
 
+## Tag Reader project
+
+<img src="https://github.com/coded-with-claws/nfc_tag_reader_simulator/blob/main/Electronics/Fritzing/2.Tag_Reader_POC.jpg"/>
+
 ## Pi Zero
 
 As user `pi`:
