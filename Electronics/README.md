@@ -1,4 +1,4 @@
-# Electronics diagmras
+# Electronic diagrams
 
 ## Install Frizing
 
