@@ -14,9 +14,10 @@ Download the Adafruit Component Database : https://github.com/adafruit/Fritzing-
 
 In Fritzing, import `AdaFruit.fzbz` file and the browse for the component on your choice.
 
-![[Pasted image 20230728141231.png]]
+<img src="https://github.com/coded-with-claws/nfc_tag_reader_simulator/blob/main/Electronics/Fritzing/Adafruit_Database_Component.png"/>
 
 Open the Diagram :
 
-![[Fritzing_Example.png]]
+<img src="https://github.com/coded-with-claws/nfc_tag_reader_simulator/blob/main/Electronics/Fritzing/Adafruit_Database_Component.png"/>
+
 
