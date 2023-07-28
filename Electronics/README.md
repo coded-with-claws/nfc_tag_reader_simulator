@@ -29,9 +29,9 @@ Open the Diagram `Electronic_diagram_tag_reader.fzz`
 
 -----------------
 
-<img src="https://github.com/coded-with-claws/nfc_tag_reader_simulator/blob/main/Electronics/Fritzing/1_Raspberry_Pi_Zero_OLED_Buzzer_LEDs.png"/>
-
 ## Raspberry Pi Zero Diagram
+
+<img src="https://github.com/coded-with-claws/nfc_tag_reader_simulator/blob/main/Electronics/Fritzing/1_Raspberry_Pi_Zero_OLED_Buzzer_LEDs.png"/>
 
 -----------------
 
