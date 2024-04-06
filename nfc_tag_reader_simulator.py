@@ -43,14 +43,15 @@ if OLED_SCREEN:
 ### LOG ############################################
 logging.basicConfig(filename='nfc_tag_reader_simulator.log', encoding='utf-8', level=logging.DEBUG)
 
-ALLOWED_TAGS = ["2391729211"]
+ALLOWED_TAGS = ["2391729211"] # robocop
+POWEROFF_TAG = "4007260474" # puzzle bobble
 COL_GREEN = "\x1b[38;5;2m"
 COL_RED = "\x1b[38;5;1m"
 COL_RESET = "\033[0m"
 
 ### END LOG ######################################
 
-### BOOT ###########################################
+### BOOT / POWEROFF ###########################################
 def startup():
     if TOUCHPHAT:
         led_enter_on_off_touchphat()
@@ -60,6 +61,17 @@ def startup():
     if OLED_SCREEN:
         startup_screen()
         screen_draw(None)
+    if BUZZER:
+        access_granted_buzzer()
+
+def poweroff():
+    if TOUCHPHAT:
+        led_enter_on_off_touchphat()
+        led_back_blink_touchphat()
+    if LEDs:
+        startup_leds()
+    if OLED_SCREEN:
+        poweroff_screen()
     if BUZZER:
         access_granted_buzzer()
 
@@ -95,6 +107,10 @@ def allow_tag(tag):
     logging.info(f"New allowed tag list: {ALLOWED_TAGS}")
 
 def validate(tag):
+    if tag == POWEROFF_TAG:
+        poweroff()
+        os.system("sudo poweroff")
+        exit()
     if tag in ALLOWED_TAGS:
         logging.info(f"{COL_GREEN}ACCESS GRANTED!{COL_RESET}")
         if TOUCHPHAT:
@@ -230,6 +246,9 @@ def startup_screen():
     i2c = board.I2C()
     oled = adafruit_ssd1306.SSD1306_I2C(SCREEN_WIDTH, SCREEN_HEIGHT, i2c, addr=0x3C, reset=oled_reset)
     screen_empty()
+
+def poweroff_screen():
+    screen_draw("POWEROFF")
 
 def screen_empty():
     global oled
