@@ -29,6 +29,7 @@ sudo pip install -r requirements.txt
 ## Arduino
 
 https://github.com/ElRojo/MiSTerRFID/blob/main/arduino/misterrfid.ino
+
 Don't forget you can adjust the gain by editing the line:
 ```
     rfid.PCD_SetRegisterBitMask(rfid.RFCfgReg, (0x03<<4)); // RFID Gain
