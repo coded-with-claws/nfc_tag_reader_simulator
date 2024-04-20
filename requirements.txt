@@ -1,3 +1,4 @@
+Adafruit-Blinka
 pyserial
 smbus
 touchphat
