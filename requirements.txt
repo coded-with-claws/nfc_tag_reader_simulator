@@ -3,4 +3,6 @@ pyserial
 smbus
 touchphat
 gpiozero
+Pillow
+adafruit-circuitpython-ssd1306
 

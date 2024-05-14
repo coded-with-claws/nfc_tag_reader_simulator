@@ -9,6 +9,8 @@
 
 ## Pi Zero
 
+Raspberry Pi OS Debian 11.
+
 As user `pi`:
 ```shell
 sudo apt-get install python3 python3-venv
