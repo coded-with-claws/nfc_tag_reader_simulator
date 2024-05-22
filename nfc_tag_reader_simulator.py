@@ -45,6 +45,9 @@ logging.basicConfig(filename='nfc_tag_reader_simulator.log', encoding='utf-8', l
 
 ALLOWED_TAGS = ["2391729211"] # robocop
 POWEROFF_TAG = "4007260474" # puzzle bobble
+TAG_1 = "2391729211" # robocop
+TAG_2 = "4007260474" # puzzle bobble
+TAG_List = [TAG_1, TAG_2, TAG_1, TAG_2, TAG_1]
 COL_GREEN = "\x1b[38;5;2m"
 COL_RED = "\x1b[38;5;1m"
 COL_RESET = "\033[0m"
@@ -157,6 +160,96 @@ def validate(tag):
             if not LEDs and not BUZZER:
                 time.sleep(3)
             screen_draw(None)
+
+def get_tag_id(reader_line, n):
+    #logging.info(f"reader_line={reader_line}")
+    match_process = re.match(string=reader_line, pattern=r"\. rfid_process\.sh (\d+)")
+    match_write = re.match(string=reader_line, pattern=r"\. rfid_write\.sh (\d+)")
+    if match_process:
+        tag = match_process.group(1)
+        #logging.info(f"Tag to process: {tag}")
+        #validate(tag)
+        
+        
+        if LEDs:
+            t_led = Thread(target=access_granted_leds)
+            t_led.start()
+        if BUZZER:
+            t_buzz = Thread(target=access_granted_buzzer)
+            t_buzz.start()
+        if OLED_SCREEN:
+            if n == 1:
+                t_screen = Thread(target=screen_draw, args=("[X    ]",))
+            elif n == 2:
+                t_screen = Thread(target=screen_draw, args=("[XX   ]",))
+            elif n == 3:
+                t_screen = Thread(target=screen_draw, args=("[XXX  ]",))
+            elif n == 4:
+                t_screen = Thread(target=screen_draw, args=("[XXXX ]",))
+            elif n == 5:
+                t_screen = Thread(target=screen_draw, args=("[XXXXX]",))
+            t_screen.start()
+        if LEDs:
+            t_led.join()
+        if BUZZER:
+            t_buzz.join()
+        # if OLED_SCREEN:
+        #     t_screen.join()
+
+        return tag  
+    elif match_write:
+        tag = match_write.group(1)
+        #logging.info(f"Tag to allow: {tag}")
+        allow_tag(tag)
+
+def try_sequence(tag_list):
+    if tag_list == TAG_List:
+        logging.info(f"{COL_GREEN}ACCESS GRANTED!{COL_RESET}")
+        if TOUCHPHAT:
+            access_granted_touchphat()
+        if LEDs:
+            t_led = Thread(target=access_granted_leds)
+            t_led.start()
+        if BUZZER:
+            t_buzz = Thread(target=access_granted_buzzer)
+            t_buzz.start()
+        if OLED_SCREEN:
+            t_screen = Thread(target=screen_draw, args=("Correct sequence",))
+            t_screen.start()
+        if LEDs:
+            t_led.join()
+        if BUZZER:
+            t_buzz.join()
+        if OLED_SCREEN:
+            t_screen.join()
+            # wait some time to read the screen in case there was no LED / Buzzer management
+            if not LEDs and not BUZZER:
+                time.sleep(5)
+                ## TODO: change the success message to be permanent until reset ?
+    else:
+        logging.info(f"{COL_RED}ACCESS DENIED!{COL_RESET}")
+        if TOUCHPHAT:
+            access_denied_touchphat()
+        if LEDs:
+            t_led = Thread(target=access_denied_leds)
+            t_led.start()
+        if BUZZER:
+            t_buzz = Thread(target=access_denied_buzzer)
+            t_buzz.start()
+        if OLED_SCREEN:
+            t_screen = Thread(target=screen_draw, args=("Invalid Sequence",))
+            t_screen.start()
+        if LEDs:
+            t_led.join()
+        if BUZZER:
+            t_buzz.join()
+        if OLED_SCREEN:
+            t_screen.join()
+            # wait some time to read the screen in case there was no LED / Buzzer management
+            if not LEDs and not BUZZER:
+                time.sleep(5)
+            screen_draw(None)
+    
 
 ### END Tag Management #################################
 
@@ -292,7 +385,8 @@ if __name__ == '__main__':
     if tty_dev is None:
         logging.info("No serial device found")
         exit(-1)
-
+    input_sequence = []
+    n_loop = 1
     os.system(f"sudo chmod 666 {tty_dev}")
     logging.info('Running. Press CTRL-C to exit.')
     with serial.Serial(tty_dev, 9600, timeout=1) as arduino:
@@ -312,7 +406,15 @@ if __name__ == '__main__':
                         #answer=rl.readline()
                         logging.info(answer)
                         arduino.flushInput() #remove data after reading
-                        process_rfid(answer.decode("ascii"))
+                        # process_rfid(answer.decode("ascii"))
+                        tag_id = get_tag_id(answer.decode("ascii"), n_loop)
+                        input_sequence.append(tag_id)
+                        if n_loop == 5 :
+                            try_sequence(input_sequence)
+                            input_sequence = []
+                            n_loop = 1
+                        else:
+                            n_loop += 1
             except KeyboardInterrupt:
                 logging.info("KeyboardInterrupt has been caught.")
                 if OLED_SCREEN:
