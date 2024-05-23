@@ -179,13 +179,13 @@ def get_tag_id(reader_line, n):
             t_buzz.start()
         if OLED_SCREEN:
             if n == 1:
-                t_screen = Thread(target=screen_draw, args=("[X    ]",))
+                t_screen = Thread(target=screen_draw, args=("[X----]",))
             elif n == 2:
-                t_screen = Thread(target=screen_draw, args=("[XX   ]",))
+                t_screen = Thread(target=screen_draw, args=("[XX---]",))
             elif n == 3:
-                t_screen = Thread(target=screen_draw, args=("[XXX  ]",))
+                t_screen = Thread(target=screen_draw, args=("[XXX--]",))
             elif n == 4:
-                t_screen = Thread(target=screen_draw, args=("[XXXX ]",))
+                t_screen = Thread(target=screen_draw, args=("[XXXX-]",))
             elif n == 5:
                 t_screen = Thread(target=screen_draw, args=("[XXXXX]",))
             t_screen.start()
@@ -208,7 +208,7 @@ def try_sequence(tag_list):
         if TOUCHPHAT:
             access_granted_touchphat()
         if LEDs:
-            t_led = Thread(target=access_granted_leds)
+            t_led = Thread(target=sequence_success_leds)
             t_led.start()
         if BUZZER:
             t_buzz = Thread(target=access_granted_buzzer)
@@ -310,6 +310,12 @@ def access_denied_leds():
     for i in range(3):
         led_enter_on_off('red', 0.8)
         time.sleep(0.4)
+
+def sequence_success_leds():
+    for i in range(5):
+        # led_enter_on_off('red', 1)
+        led_enter_on_off('green', 1)
+        led_enter_on_off('both', 1)
 
 ### END LED Management -LEDs #################################
 
