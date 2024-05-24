@@ -11,7 +11,6 @@ MFRC522::MIFARE_Key key;
 
 int codeRead = 0;
 uint32_t cardid = 0;
-int cardBeenRead = 0;
 uint32_t lastCardRead = 0;
 int waitForIt = 0;
 String uidString;
@@ -28,21 +27,11 @@ void setup() {
 }
 
 void loop() {
-  if ((waitForIt == 0) && (cardBeenRead == 0)) {
-    Serial.println(". rfid_process.sh noscan");
-  }
-
-  waitForIt++;
-
-  if (waitForIt >= 9) {
-    waitForIt = 0;
-  }
-
   if (  rfid.PICC_IsNewCardPresent())
   {
     readRFID();
   }
-  delay(100);
+  delay(100); // delay for CPU charge
 }
 
 void cardLogic(String proc, uint32_t cardNum) {
@@ -54,7 +43,7 @@ void cardLogic(String proc, uint32_t cardNum) {
     Serial.println(proc);
   }
   lastCardRead = cardNum;
-  delay(1000); 
+  delay(2000); // delay for reading next tag
   digitalWrite(LED_BUILTIN, LOW);
 }
 
@@ -79,15 +68,10 @@ void readRFID()
   cardid <<= 8;
   cardid |= rfid.uid.uidByte[3];
 
-  cardBeenRead = 1;
-
-  if (lastCardRead != wCard && cardid == wCard) {
-    cardLogic("mpg123 /media/fat/Scripts/rfid_util/write_tag.mp3", cardid);
-  }
-  else if (lastCardRead == wCard && cardid != wCard) {
+  if (lastCardRead == wCard && cardid != wCard) {
     cardLogic(". rfid_write.sh ", cardid);
   }
-  else if (cardid != lastCardRead) {
+  else {
     cardLogic(". rfid_process.sh ", cardid);
   }
 
