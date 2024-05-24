@@ -193,6 +193,8 @@ def get_tag_id(reader_line, n_l, status_seq):
         if OLED_SCREEN:
             if tag == TAG_SUPERVISOR and status_seq:
                 t_screen = Thread(target=screen_draw, args=("Congratulations employee",))
+                t_screen.start()
+                time.sleep(5)
             else:
                 if n_l == 1:
                     t_screen = Thread(target=screen_draw, args=("[X----]",))
@@ -206,7 +208,7 @@ def get_tag_id(reader_line, n_l, status_seq):
                     t_screen = Thread(target=screen_draw, args=("[XXXXX]",))
                 else:
                     t_screen = Thread(target=screen_draw, args=("[-----]",))
-            t_screen.start()
+                t_screen.start()
         if LEDs:
             t_led.join()
         if BUZZER:
@@ -243,7 +245,6 @@ def try_sequence(tag_list):
             # wait some time to read the screen in case there was no LED / Buzzer management
             if not LEDs and not BUZZER:
                 time.sleep(5)
-                ## TODO: change the success message to be permanent until reset ?3
         return True
     else:
         logging.info(f"{COL_RED}ACCESS DENIED! Wrong sequence{COL_RESET}")
