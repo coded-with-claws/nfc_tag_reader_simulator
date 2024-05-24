@@ -192,7 +192,7 @@ def get_tag_id(reader_line, n_l, status_seq):
             t_buzz.start()
         if OLED_SCREEN:
             if tag == TAG_SUPERVISOR and status_seq:
-                t_screen = Thread(target=screen_draw, args=("Congratulations employee",))
+                t_screen = Thread(target=screen_draw, args=(["Congratulations", "employee", "Code is 1234"],))
                 t_screen.start()
                 time.sleep(5)
             else:
@@ -234,7 +234,7 @@ def try_sequence(tag_list):
             t_buzz = Thread(target=access_granted_buzzer)
             t_buzz.start()
         if OLED_SCREEN:
-            t_screen = Thread(target=screen_draw, args=("Correct sequence",))
+            t_screen = Thread(target=screen_draw, args=(["", "Correct sequence", "Supervisor tag?"],))
             t_screen.start()
         if LEDs:
             t_led.join()
@@ -402,7 +402,10 @@ def screen_draw(access):
         status_msg = access
     else:
         status_msg = "WAITING"
-    status_msg = screen_offset(status_msg)
+    if not isinstance(status_msg, list):
+        status_msg = ["", status_msg, ""]
+    for msg in status_msg:
+        msg = screen_offset(msg)
 
     image = Image.new("1", (oled.width, oled.height))
     draw = ImageDraw.Draw(image)
@@ -411,9 +414,9 @@ def screen_draw(access):
 
     draw.rectangle((0, 0, oled.width, oled.height), outline=0, fill=0)
     draw.text((0, 0), screen_offset("ACCESS CONTROL"), font=font, fill=255)
-    # draw.text((0, 16), "", font=font, fill=255)
-    draw.text((0, 32), status_msg, font=font, fill=255)
-    # draw.text((0, 48), "", font=font, fill=255)
+    draw.text((0, 16), status_msg[0], font=font, fill=255)
+    draw.text((0, 32), status_msg[1], font=font, fill=255)
+    draw.text((0, 48), status_msg[2], font=font, fill=255)
 
     oled.image(image)
     oled.show()
