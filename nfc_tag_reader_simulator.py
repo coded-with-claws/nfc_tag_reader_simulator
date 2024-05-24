@@ -46,13 +46,13 @@ logging.basicConfig(filename='nfc_tag_reader_simulator.log', encoding='utf-8', l
 ALLOWED_TAGS = ["2391729211"]  # robocop
 POWEROFF_TAG = "4007260474"  # puzzle bobble
 
-TAG_1 = "2391729211"  # robocop
-TAG_2 = "1773311577"  # blank card
-TAG_3 = "3457133370"  # bomberman2
-TAG_4 = TAG_2  # blank card
-TAG_5 = TAG_1  # robocop
+TAG_1 = "644494848"  # tag A
+TAG_2 = "2796241408"  # tag B
+TAG_3 = "1993159168"  # tag C
+TAG_4 = "4137043456"  # tag D
+TAG_5 = "108286976"  # tag E
 TAG_List = [TAG_1, TAG_2, TAG_3, TAG_4, TAG_5]
-TAG_SUPERVISOR = TAG_3  # bomberman2
+TAG_SUPERVISOR = "372325632"  # tag S
 
 COL_GREEN = "\x1b[38;5;2m"
 COL_RED = "\x1b[38;5;1m"
