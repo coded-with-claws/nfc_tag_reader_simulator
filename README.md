@@ -30,7 +30,8 @@ sudo pip install -r requirements.txt
 
 ## Arduino
 
-https://github.com/ElRojo/MiSTerRFID/blob/main/arduino/misterrfid.ino
+flash `nfc_tag_reader.ino`
+(based on https://github.com/ElRojo/MiSTerRFID/blob/main/arduino/misterrfid.ino)
 
 Don't forget you can adjust the gain by editing the line:
 ```
