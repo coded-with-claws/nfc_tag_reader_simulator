@@ -1,13 +1,11 @@
 
-# POC
-
-## Tag Reader project
+# NFC Tag Reader Simulator
 
 <img src="https://github.com/coded-with-claws/nfc_tag_reader_simulator/blob/main/Electronics/Fritzing/POC_tag_reader.gif" />
 
-# Pre-requisite
+## Pre-requisite
 
-## Pi Zero
+### Pi Zero
 
 Raspberry Pi OS Debian 11.
 
@@ -28,9 +26,9 @@ sudo apt-get install python3-smbus
 sudo pip install -r requirements.txt
 ```
 
-## Arduino
+### Arduino
 
-flash `nfc_tag_reader.ino`
+Flash `nfc_module/nfc_module.ino`
 (based on https://github.com/ElRojo/MiSTerRFID/blob/main/arduino/misterrfid.ino)
 
 Don't forget you can adjust the gain by editing the line:
@@ -39,36 +37,53 @@ Don't forget you can adjust the gain by editing the line:
 ```
 Note: for our RobotDyn MFRC522, we have set `0x02<<4` (otherwise, it had the tendency to read incorrect values sometimes).
 
-# Crontab
+How-to flash with arduino-cli from the raspberry pi (as user `pi`):
+```
+cd
+curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
+sudo ln -s ~/bin/arduino-cli /usr/local/bin/
+arduino-cli config init
+arduino-cli core update-index
+arduino-cli core install arduino:avr
+arduino-cli core list
+=> Check that Arduino AVR is listed
+arduino-cli board list
+=> Check that /dev/ttyUSB0 is listed
+arduino-cli lib install "Easy MFRC522"
+arduino-cli compile -b arduino:avr:nano nfc_module/
+arduino-cli upload -b arduino:avr:nano --port /dev/ttyUSB0 nfc_module/
+```
+
+## Crontab
 ```shell
 crontab -e
 ```
 
-## With venv
+### With venv
 ```shell
 @reboot while true; do ~/nfc_tag_reader_simulator/venv/bin/python ~/nfc_tag_reader_simulator/nfc_tag_reader_simulator.py; sleep 10; done
 ```
 
-## Without venv
+### Without venv
 ```shell
 @reboot while true; do python ~/nfc_tag_reader_simulator/nfc_tag_reader_simulator.py; sleep 10; done
 ```
 
-## Touch pHat (optional)
+### Touch pHat (optional)
 
 Plugged on GPIO pins.
 
-## LEDs (optional)
+### LEDs (optional)
 
 Plug LEDs:
 - a red LED on GPIO17 (pin 11)
 - a green LED on GPIO27 (pin 13).
 
-## Buzzer (optional)
+### Buzzer (optional)
 
 Plug the buzzer on GPIO22 (pin 15).
 
-## OLED screen (optional)
+### OLED screen (optional)
 
 Follow install instructions on https://github.com/mklements/OLED_Stats
 
@@ -78,7 +93,7 @@ Plug SSD1306:
 - OLED SCL on SCL1 (pin 5)
 - OLED GND on GND (pin 9)
 
-## POC ** Under Dev **
+## POC result
 
 <img src="https://github.com/coded-with-claws/nfc_tag_reader_simulator/blob/main/Electronics/Fritzing/2.Tag_Reader_POC.jpg"/>
 
