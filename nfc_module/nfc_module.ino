@@ -69,10 +69,10 @@ void readRFID()
   cardid |= rfid.uid.uidByte[3];
 
   if (lastCardRead == wCard && cardid != wCard) {
-    cardLogic("r ", cardid);
+    cardLogic("w ", cardid);
   }
   else {
-    cardLogic("w ", cardid);
+    cardLogic("r ", cardid);
   }
 
 
