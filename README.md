@@ -46,12 +46,13 @@ arduino-cli config init
 arduino-cli core update-index
 arduino-cli core install arduino:avr
 arduino-cli core list
-=> Check that Arduino AVR is listed
+=> Check that "Arduino AVR" is listed
 arduino-cli board list
-=> Check that /dev/ttyUSB0 is listed
+=> Check that "/dev/ttyUSB0" is listed
 arduino-cli lib install "Easy MFRC522"
 arduino-cli compile -b arduino:avr:nano nfc_module/
 arduino-cli upload -b arduino:avr:nano --port /dev/ttyUSB0 nfc_module/
+=> Check that it displays "New upload port: /dev/ttyUSB0 (serial)"
 ```
 
 ## Crontab
