@@ -1,13 +1,11 @@
 
-# POC
-
-## Tag Reader project
+# NFC Tag Reader Simulator
 
 <img src="https://github.com/coded-with-claws/nfc_tag_reader_simulator/blob/main/Electronics/Fritzing/POC_tag_reader.gif" />
 
-# Pre-requisite
+## Pre-requisite
 
-## Pi Zero
+### Pi Zero
 
 Raspberry Pi OS Debian 11.
 
@@ -28,7 +26,7 @@ sudo apt-get install python3-smbus
 sudo pip install -r requirements.txt
 ```
 
-## Arduino
+### Arduino
 
 https://github.com/ElRojo/MiSTerRFID/blob/main/arduino/misterrfid.ino
 
@@ -38,17 +36,17 @@ Don't forget you can adjust the gain by editing the line:
 ```
 Note: for our RobotDyn MFRC522, we have set `0x02<<4` (otherwise, it had the tendency to read incorrect values sometimes).
 
-# Crontab
+## Crontab
 ```shell
 crontab -e
 ```
 
-## With venv
+### With venv
 ```shell
 @reboot while true; do ~/nfc_tag_reader_simulator/venv/bin/python ~/nfc_tag_reader_simulator/nfc_tag_reader_simulator.py; sleep 10; done
 ```
 
-## Without venv
+### Without venv
 ```shell
 @reboot while true; do python ~/nfc_tag_reader_simulator/nfc_tag_reader_simulator.py; sleep 10; done
 ```
@@ -77,7 +75,7 @@ Plug SSD1306:
 - OLED SCL on SCL1 (pin 5)
 - OLED GND on GND (pin 9)
 
-## POC ** Under Dev **
+## POC result
 
 <img src="https://github.com/coded-with-claws/nfc_tag_reader_simulator/blob/main/Electronics/Fritzing/2.Tag_Reader_POC.jpg"/>
 
