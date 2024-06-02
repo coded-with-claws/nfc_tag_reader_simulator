@@ -51,21 +51,23 @@ crontab -e
 @reboot while true; do python ~/nfc_tag_reader_simulator/nfc_tag_reader_simulator.py; sleep 10; done
 ```
 
-## Touch pHat (optional)
+## Modules
+
+### Touch pHat (optional)
 
 Plugged on GPIO pins.
 
-## LEDs (optional)
+### LEDs (optional)
 
 Plug LEDs:
 - a red LED on GPIO17 (pin 11)
 - a green LED on GPIO27 (pin 13).
 
-## Buzzer (optional)
+### Buzzer (optional)
 
 Plug the buzzer on GPIO22 (pin 15).
 
-## OLED screen (optional)
+### OLED screen (optional)
 
 Follow install instructions on https://github.com/mklements/OLED_Stats
 
