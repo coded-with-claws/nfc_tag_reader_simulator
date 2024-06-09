@@ -19,7 +19,7 @@ void setup() {
   Serial.begin(9600);
   SPI.begin(); // Init SPI bus
   rfid.PCD_Init(); // Init MFRC522
-  rfid.PCD_SetRegisterBitMask(rfid.RFCfgReg, (0x03<<4)); // RFID Gain
+  rfid.PCD_SetRegisterBitMask(rfid.RFCfgReg, (0x02<<4)); // RFID Gain
   pinMode(8,OUTPUT);
   pinMode(A0,OUTPUT);
   Serial.println("loaded"); 

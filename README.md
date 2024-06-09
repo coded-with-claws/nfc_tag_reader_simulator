@@ -35,7 +35,7 @@ Change the value of `WRITE_TAG` if you want to have a master key to authorize ad
 
 Don't forget you can adjust the gain by editing the line:
 ```
-    rfid.PCD_SetRegisterBitMask(rfid.RFCfgReg, (0x03<<4)); // RFID Gain
+    rfid.PCD_SetRegisterBitMask(rfid.RFCfgReg, (0x02<<4)); // RFID Gain
 ```
 Note: for our RobotDyn MFRC522, we have set `0x02<<4` (otherwise, it had the tendency to read incorrect values sometimes).
 
