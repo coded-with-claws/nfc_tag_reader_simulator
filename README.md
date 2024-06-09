@@ -28,13 +28,34 @@ sudo pip install -r requirements.txt
 
 ### Arduino
 
-https://github.com/ElRojo/MiSTerRFID/blob/main/arduino/misterrfid.ino
+Flash `nfc_module/nfc_module.ino`
+(based on https://github.com/ElRojo/MiSTerRFID/blob/main/arduino/misterrfid.ino)
+
+Change the value of `WRITE_TAG` if you want to have a master key to authorize additional tags.
 
 Don't forget you can adjust the gain by editing the line:
 ```
     rfid.PCD_SetRegisterBitMask(rfid.RFCfgReg, (0x03<<4)); // RFID Gain
 ```
 Note: for our RobotDyn MFRC522, we have set `0x02<<4` (otherwise, it had the tendency to read incorrect values sometimes).
+
+How-to flash with arduino-cli from the raspberry pi (as user `pi`):
+```
+cd
+curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
+sudo ln -s ~/bin/arduino-cli /usr/local/bin/
+arduino-cli config init
+arduino-cli core update-index
+arduino-cli core install arduino:avr
+arduino-cli core list
+=> Check that "Arduino AVR" is listed
+arduino-cli board list
+=> Check that "/dev/ttyUSB0" is listed
+arduino-cli lib install "Easy MFRC522"
+arduino-cli compile -b arduino:avr:nano nfc_module/
+arduino-cli upload -b arduino:avr:nano --port /dev/ttyUSB0 nfc_module/
+=> Check that it displays "New upload port: /dev/ttyUSB0 (serial)"
+```
 
 ## Crontab
 ```shell

@@ -43,8 +43,8 @@ if OLED_SCREEN:
 ### LOG ############################################
 logging.basicConfig(filename='nfc_tag_reader_simulator.log', encoding='utf-8', level=logging.DEBUG)
 
-ALLOWED_TAGS = ["2391729211"] # robocop
-POWEROFF_TAG = "4007260474" # puzzle bobble
+ALLOWED_TAGS = ["2391729211"]
+POWEROFF_TAG = "4007260474"
 COL_GREEN = "\x1b[38;5;2m"
 COL_RED = "\x1b[38;5;1m"
 COL_RESET = "\033[0m"
@@ -91,8 +91,8 @@ def find_serial_dev():
 ### Tag Management #################################
 def process_rfid(reader_line):
     #logging.info(f"reader_line={reader_line}")
-    match_process = re.match(string=reader_line, pattern=r"\. rfid_process\.sh (\d+)")
-    match_write = re.match(string=reader_line, pattern=r"\. rfid_write\.sh (\d+)")
+    match_process = re.match(string=reader_line, pattern=r"r (\d+)")
+    match_write = re.match(string=reader_line, pattern=r"w (\d+)")
     if match_process:
         tag = match_process.group(1)
         #logging.info(f"Tag to process: {tag}")
