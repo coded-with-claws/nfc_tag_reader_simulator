@@ -1,3 +1,4 @@
+// Codebase from https://github.com/ElRojo/MiSTerRFID/blob/main/arduino/misterrfid.ino
 #include <MFRC522.h>
 #include <SPI.h>
 
