@@ -43,8 +43,9 @@ if OLED_SCREEN:
 ### LOG ############################################
 logging.basicConfig(filename='nfc_tag_reader_simulator.log', encoding='utf-8', level=logging.DEBUG)
 
-ALLOWED_TAGS = ["2391729211"]
-POWEROFF_TAG = "4007260474"
+ALLOWED_TAGS = ["651317760", "2391729211"] # homer, robocop
+# POWEROFF_TAG = "4007260474" # puzzle bobble
+POWEROFF_TAG = "3601476352"
 COL_GREEN = "\x1b[38;5;2m"
 COL_RED = "\x1b[38;5;1m"
 COL_RESET = "\033[0m"
@@ -93,6 +94,7 @@ def process_rfid(reader_line):
     #logging.info(f"reader_line={reader_line}")
     match_process = re.match(string=reader_line, pattern=r"r (\d+)")
     match_write = re.match(string=reader_line, pattern=r"w (\d+)")
+    match_masterkey = re.match(string=reader_line, pattern=r"m")
     if match_process:
         tag = match_process.group(1)
         #logging.info(f"Tag to process: {tag}")
@@ -101,10 +103,42 @@ def process_rfid(reader_line):
         tag = match_write.group(1)
         #logging.info(f"Tag to allow: {tag}")
         allow_tag(tag)
+    elif match_masterkey:
+        masterkey_detected()
+
+def masterkey_detected():
+    logging.info(f"Master key detected")
+    if BUZZER:
+        t_buzz = Thread(target=masterkey_buzzer)
+        t_buzz.start()
+    if OLED_SCREEN:
+        t_screen = Thread(target=screen_draw, args=("ENROLL TAG",))
+        t_screen.start()
+    time.sleep(2)
+    if BUZZER:
+        t_buzz.join()
+    if OLED_SCREEN:
+        t_screen.join()
+        screen_draw(None)
 
 def allow_tag(tag):
-    ALLOWED_TAGS.append(tag)
-    logging.info(f"New allowed tag list: {ALLOWED_TAGS}")
+    info_text = "ALREADY ADDED"
+    if tag not in ALLOWED_TAGS:
+        ALLOWED_TAGS.append(tag)
+        info_text = "ADDED TAG"
+        logging.info(f"New allowed tag list: {ALLOWED_TAGS}")
+    if BUZZER:
+        t_buzz = Thread(target=masterkey_buzzer)
+        t_buzz.start()
+    if OLED_SCREEN:
+        t_screen = Thread(target=screen_draw, args=(info_text,))
+        t_screen.start()
+    time.sleep(2)
+    if BUZZER:
+        t_buzz.join()
+    if OLED_SCREEN:
+        t_screen.join()
+        screen_draw(None)
 
 def validate(tag):
     if tag == POWEROFF_TAG:
@@ -237,6 +271,10 @@ def access_denied_buzzer():
         buzzer_on_off(0.8)
         time.sleep(0.4)
 
+def masterkey_buzzer():
+    buzzer_on_off(0.1)
+    time.sleep(0.1)
+
 ### END BUZZER Management  #################################
 
 ### SCREEN Management #################################
@@ -287,7 +325,6 @@ def screen_draw(access):
 ### MAIN ###############################################
 if __name__ == '__main__':
     
-    startup()
     tty_dev = find_serial_dev()
     if tty_dev is None:
         logging.info("No serial device found")
@@ -301,6 +338,7 @@ if __name__ == '__main__':
         time.sleep(0.1) #wait for serial to open
         if arduino.isOpen():
             logging.info(f"{arduino.port} connected!")
+            startup()
             try:
                 while True:
                     #cmd=input("Enter command : ")
