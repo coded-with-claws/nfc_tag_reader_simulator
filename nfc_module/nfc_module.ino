@@ -22,7 +22,7 @@ void setup() {
   rfid.PCD_SetRegisterBitMask(rfid.RFCfgReg, (0x02<<4)); // RFID Gain
   pinMode(8,OUTPUT);
   pinMode(A0,OUTPUT);
-  Serial.println("loaded");
+  //Serial.println("loaded");
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, LOW);
 }
