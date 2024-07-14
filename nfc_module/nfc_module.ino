@@ -2,7 +2,8 @@
 #include <MFRC522.h>
 #include <SPI.h>
 
-#define WRITE_TAG 1982808832
+//#define WRITE_TAG 1982808832 //ancienne carte autocollants non colles
+#define WRITE_TAG 3054518528
 #define SS_PIN 10
 #define RST_PIN 9
 

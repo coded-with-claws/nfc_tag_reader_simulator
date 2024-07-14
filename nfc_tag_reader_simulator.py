@@ -43,9 +43,10 @@ if OLED_SCREEN:
 ### LOG ############################################
 logging.basicConfig(filename='nfc_tag_reader_simulator.log', encoding='utf-8', level=logging.DEBUG)
 
-ALLOWED_TAGS = ["651317760", "2391729211"] # homer, robocop
+ALLOWED_TAGS = ["1179992064", "651317760", "2391729211"] # homer autocollants collés, homer autocollants non collés, robocop
 # POWEROFF_TAG = "4007260474" # puzzle bobble
-POWEROFF_TAG = "3601476352"
+# POWEROFF_TAG = "3601476352" # ancienne carte poweroff autocollants non collés
+POWEROFF_TAG = "3055374848"
 COL_GREEN = "\x1b[38;5;2m"
 COL_RED = "\x1b[38;5;1m"
 COL_RESET = "\033[0m"
