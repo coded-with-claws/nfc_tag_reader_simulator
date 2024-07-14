@@ -44,21 +44,24 @@ if OLED_SCREEN:
 logging.basicConfig(filename='nfc_tag_reader_simulator.log', encoding='utf-8', level=logging.DEBUG)
 
 ALLOWED_TAGS = ["2391729211"]  # robocop
-POWEROFF_TAG = "4007260474"  # puzzle bobble
+# POWEROFF_TAG = "4007260474"  # puzzle bobble
+# POWEROFF_TAG = "3601476352" # ancienne carte poweroff autocollants non collés
+POWEROFF_TAG = "3055374848"
 
-#TAG_1 = "644494848"  # tag A OLD (TESTING)
-TAG_1 = "3596626688"  # tag A
-#TAG_2 = "2796241408"  # tag B OLD (TESTING)
-TAG_2 = "3321902080"  # tag B
-#TAG_3 = "1993159168"  # tag C OLD (TESTING)
-TAG_3 = "1183007744"  # tag C
-#TAG_4 = "4137043456"  # tag D OLD (TESTING)
-TAG_4 = "649478912"  # tag D
-#TAG_5 = "108286976"  # tag E OLD (TESTING)
-TAG_5 = "1458001664"  # tag E
-TAG_List = [TAG_1, TAG_2, TAG_3, TAG_4, TAG_5]
+#TAG_A = "644494848"  # tag A OLD (TESTING)
+TAG_A = "3596626688"  # tag A
+#TAG_B = "2796241408"  # tag B OLD (TESTING)
+TAG_B = "3321902080"  # tag B
+#TAG_C = "1993159168"  # tag C OLD (TESTING)
+TAG_C = "1183007744"  # tag C
+#TAG_D = "4137043456"  # tag D OLD (TESTING)
+TAG_D = "649478912"  # tag D
+#TAG_E = "108286976"  # tag E OLD (TESTING)
+TAG_E = "1458001664"  # tag E
+TAG_List = [TAG_B, TAG_E, TAG_C, TAG_A, TAG_D]
 #TAG_SUPERVISOR = "372325632"  # tag S OLD (TESTING)
 TAG_SUPERVISOR = "1717453568"  # tag S
+BOMB_CODE = "8527"
 
 COL_GREEN = "\x1b[38;5;2m"
 COL_RED = "\x1b[38;5;1m"
@@ -108,76 +111,76 @@ def find_serial_dev():
 ### END Serial Management ##############################
 
 ### Tag Management #################################
-def process_rfid(reader_line):
-    #logging.info(f"reader_line={reader_line}")
-    match_process = re.match(string=reader_line, pattern=r"r (\d+)")
-    match_write = re.match(string=reader_line, pattern=r"w (\d+)")
-    if match_process:
-        tag = match_process.group(1)
-        # logging.info(f"Tag to process: {tag}")
-        validate(tag)
-    elif match_write:
-        tag = match_write.group(1)
-        # logging.info(f"Tag to allow: {tag}")
-        allow_tag(tag)
-
-
-def allow_tag(tag):
-    ALLOWED_TAGS.append(tag)
-    logging.info(f"New allowed tag list: {ALLOWED_TAGS}")
-
-
-def validate(tag):
-    if tag == POWEROFF_TAG:
-        poweroff()
-        os.system("sudo poweroff")
-        exit()
-    if tag in ALLOWED_TAGS:
-        logging.info(f"{COL_GREEN}ACCESS GRANTED!{COL_RESET}")
-        if TOUCHPHAT:
-            access_granted_touchphat()
-        if LEDs:
-            t_led = Thread(target=access_granted_leds)
-            t_led.start()
-        if BUZZER:
-            t_buzz = Thread(target=access_granted_buzzer)
-            t_buzz.start()
-        if OLED_SCREEN:
-            t_screen = Thread(target=screen_draw, args=("GRANTED",))
-            t_screen.start()
-        if LEDs:
-            t_led.join()
-        if BUZZER:
-            t_buzz.join()
-        if OLED_SCREEN:
-            t_screen.join()
-            # wait some time to read the screen in case there was no LED / Buzzer management
-            if not LEDs and not BUZZER:
-                time.sleep(3)
-            screen_draw(None)
-    else:
-        logging.info(f"{COL_RED}ACCESS DENIED!{COL_RESET}")
-        if TOUCHPHAT:
-            access_denied_touchphat()
-        if LEDs:
-            t_led = Thread(target=access_denied_leds)
-            t_led.start()
-        if BUZZER:
-            t_buzz = Thread(target=access_denied_buzzer)
-            t_buzz.start()
-        if OLED_SCREEN:
-            t_screen = Thread(target=screen_draw, args=("DENIED",))
-            t_screen.start()
-        if LEDs:
-            t_led.join()
-        if BUZZER:
-            t_buzz.join()
-        if OLED_SCREEN:
-            t_screen.join()
-            # wait some time to read the screen in case there was no LED / Buzzer management
-            if not LEDs and not BUZZER:
-                time.sleep(3)
-            screen_draw(None)
+#def process_rfid(reader_line):
+#    #logging.info(f"reader_line={reader_line}")
+#    match_process = re.match(string=reader_line, pattern=r"r (\d+)")
+#    match_write = re.match(string=reader_line, pattern=r"w (\d+)")
+#    if match_process:
+#        tag = match_process.group(1)
+#        # logging.info(f"Tag to process: {tag}")
+#        validate(tag)
+#    elif match_write:
+#        tag = match_write.group(1)
+#        # logging.info(f"Tag to allow: {tag}")
+#        allow_tag(tag)
+#
+#
+#def allow_tag(tag):
+#    ALLOWED_TAGS.append(tag)
+#    logging.info(f"New allowed tag list: {ALLOWED_TAGS}")
+#
+#
+#def validate(tag):
+#    if tag == POWEROFF_TAG:
+#        poweroff()
+#        os.system("sudo poweroff")
+#        exit()
+#    if tag in ALLOWED_TAGS:
+#        logging.info(f"{COL_GREEN}ACCESS GRANTED!{COL_RESET}")
+#        if TOUCHPHAT:
+#            access_granted_touchphat()
+#        if LEDs:
+#            t_led = Thread(target=access_granted_leds)
+#            t_led.start()
+#        if BUZZER:
+#            t_buzz = Thread(target=access_granted_buzzer)
+#            t_buzz.start()
+#        if OLED_SCREEN:
+#            t_screen = Thread(target=screen_draw, args=("GRANTED",))
+#            t_screen.start()
+#        if LEDs:
+#            t_led.join()
+#        if BUZZER:
+#            t_buzz.join()
+#        if OLED_SCREEN:
+#            t_screen.join()
+#            # wait some time to read the screen in case there was no LED / Buzzer management
+#            if not LEDs and not BUZZER:
+#                time.sleep(3)
+#            screen_draw(None)
+#    else:
+#        logging.info(f"{COL_RED}ACCESS DENIED!{COL_RESET}")
+#        if TOUCHPHAT:
+#            access_denied_touchphat()
+#        if LEDs:
+#            t_led = Thread(target=access_denied_leds)
+#            t_led.start()
+#        if BUZZER:
+#            t_buzz = Thread(target=access_denied_buzzer)
+#            t_buzz.start()
+#        if OLED_SCREEN:
+#            t_screen = Thread(target=screen_draw, args=("DENIED",))
+#            t_screen.start()
+#        if LEDs:
+#            t_led.join()
+#        if BUZZER:
+#            t_buzz.join()
+#        if OLED_SCREEN:
+#            t_screen.join()
+#            # wait some time to read the screen in case there was no LED / Buzzer management
+#            if not LEDs and not BUZZER:
+#                time.sleep(3)
+#            screen_draw(None)
 
 
 def get_tag_id(reader_line, n_l, status_seq):
@@ -197,10 +200,28 @@ def get_tag_id(reader_line, n_l, status_seq):
             t_buzz = Thread(target=access_granted_buzzer)
             t_buzz.start()
         if OLED_SCREEN:
-            if tag == TAG_SUPERVISOR and status_seq:
-                t_screen = Thread(target=screen_draw, args=(["Congratulations", "employee", "Code is 1234"],))
-                t_screen.start()
-                time.sleep(5)
+            if status_seq:
+                if tag == TAG_SUPERVISOR:
+                    t_screen = Thread(target=screen_draw, args=(["Congratulations", "employees", f"Code is {BOMB_CODE}"],))
+                    t_screen.start()
+                    time.sleep(5)
+                else:
+                    t_screen = Thread(target=screen_draw, args=(["This is not a", "supervisor tag.", "Try again..."],))
+                    t_screen.start()
+                    n_l = 0
+                    status_seq = False
+                    if LEDs:
+                        t_led.join()
+                        t_led = Thread(target=access_denied_leds)
+                        t_led.start()
+                    if BUZZER:
+                        t_buzz.join()
+                        t_buzz = Thread(target=access_denied_buzzer)
+                        t_buzz.start()
+                    time.sleep(3)
+                    if not BUZZER and not LEDs:
+                        time.sleep(2)
+                    screen_draw(None)
             else:
                 if n_l == 1:
                     t_screen = Thread(target=screen_draw, args=("[X----]",))
@@ -222,7 +243,7 @@ def get_tag_id(reader_line, n_l, status_seq):
         if OLED_SCREEN:
             t_screen.join()
 
-        return tag
+        return tag, status_seq, n_l
     elif match_write:
         tag = match_write.group(1)
         allow_tag(tag)
@@ -230,7 +251,7 @@ def get_tag_id(reader_line, n_l, status_seq):
 
 def try_sequence(tag_list):
     if tag_list == TAG_List:
-        logging.info(f"{COL_GREEN}ACCESS GRANTED! Correct Sequence{COL_RESET}")
+        logging.info(f"{COL_GREEN}ACCESS GRANTED! Correct sequence{COL_RESET}")
         if TOUCHPHAT:
             access_granted_touchphat()
         if LEDs:
@@ -240,7 +261,8 @@ def try_sequence(tag_list):
             t_buzz = Thread(target=access_granted_buzzer)
             t_buzz.start()
         if OLED_SCREEN:
-            t_screen = Thread(target=screen_draw, args=(["", "Correct sequence", "Supervisor tag?"],))
+            #t_screen = Thread(target=screen_draw, args=(["", "Correct sequence", "Supervisor tag?"],))
+            t_screen = Thread(target=screen_draw, args=(["", "Correct sequence", ""],))
             t_screen.start()
         if LEDs:
             t_led.join()
@@ -248,6 +270,7 @@ def try_sequence(tag_list):
             t_buzz.join()
         if OLED_SCREEN:
             t_screen.join()
+            screen_draw(["", "Correct sequence", "Supervisor tag?"])
             # wait some time to read the screen in case there was no LED / Buzzer management
             if not LEDs and not BUZZER:
                 time.sleep(5)
@@ -263,7 +286,7 @@ def try_sequence(tag_list):
             t_buzz = Thread(target=access_denied_buzzer)
             t_buzz.start()
         if OLED_SCREEN:
-            t_screen = Thread(target=screen_draw, args=("Invalid Sequence",))
+            t_screen = Thread(target=screen_draw, args=("Invalid sequence",))
             t_screen.start()
         if LEDs:
             t_led.join()
@@ -347,7 +370,7 @@ def access_denied_leds():
 
 
 def sequence_success_leds():
-    for i in range(5):
+    for i in range(3):
         # led_enter_on_off('red', 1)
         led_enter_on_off('green', 1)
         led_enter_on_off('both', 1)
@@ -461,8 +484,11 @@ if __name__ == '__main__':
                         logging.info(answer)
                         arduino.flushInput()  # remove data after reading
                         # process_rfid(answer.decode("ascii"))
-                        tag_id = get_tag_id(answer.decode("ascii"), n_loop, status_sequence)
-                        input_sequence.append(tag_id)
+                        tag_id, status_sequence, n_loop = get_tag_id(answer.decode("ascii"), n_loop, status_sequence)
+                        if n_loop == 0:
+                            input_sequence = []
+                        else:
+                            input_sequence.append(tag_id)
                         if n_loop == 5:
                             status_sequence = try_sequence(input_sequence)
                             input_sequence = []
