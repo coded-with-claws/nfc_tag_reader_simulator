@@ -34,6 +34,7 @@ if LEDs:
 
 if BUZZER:
     from gpiozero import Buzzer
+    buzzer = Buzzer(GPIO_BUZZER)
 
 if OLED_SCREEN:
     import board
@@ -356,23 +357,12 @@ def sequence_success_leds():
 ### END LED Management -LEDs #################################
 
 ### BUZZER Management #################################
-def buzzer_on_off(duration):
-    buzzer = Buzzer(GPIO_BUZZER)
-    buzzer.on()
-    time.sleep(duration)
-    buzzer.off()
-
-
 def access_granted_buzzer():
-    buzzer_on_off(0.1)
-    time.sleep(0.1)
-    buzzer_on_off(0.1)
+    buzzer.blink(on_time=0.1, off_time=0.1, n=2)
 
 
 def access_denied_buzzer():
-    for i in range(3):
-        buzzer_on_off(0.8)
-        time.sleep(0.4)
+    buzzer.blink(on_time=0.8, off_time=0.4, n=3)
 
 
 ### END BUZZER Management  #################################
