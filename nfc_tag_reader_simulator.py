@@ -28,9 +28,12 @@ if TOUCHPHAT:
 
 if LEDs:
     from gpiozero import LED
+    redled = LED(GPIO_REDLED)
+    greenled = LED(GPIO_GREENLED)
 
 if BUZZER:
     from gpiozero import Buzzer
+    buzzer = Buzzer(GPIO_BUZZER)
 
 if OLED_SCREEN:
     import board
@@ -225,56 +228,26 @@ def led_back_blink_touchphat():
 
 ### LED Management -LEDs #################################
 def startup_leds():
-    led_enter_on_off('red', 1)
-    led_enter_on_off('green', 1)
-    led_enter_on_off('both', 1)
+    redled.blink(on_time=1, off_time=0.5, n=3)
+    greenled.blink(on_time=1, off_time=0.5, n=3)
 
-def led_enter_on_off(leds, duration):
-    redled = LED(GPIO_REDLED)
-    greenled = LED(GPIO_GREENLED)
-    if leds in ('red', 'both'):
-        redled.on()
-    if leds in ('green', 'both'):
-        greenled.on()
-    time.sleep(duration)
-    if leds in ('red', 'both'):
-        redled.off()
-    if leds in ('green', 'both'):
-        greenled.off()
 
 def access_granted_leds():
-    led_enter_on_off('green', 1)
+    greenled.blink(on_time=0.8, off_time=0.2, n=1)
+
 
 def access_denied_leds():
-#    for i in range(10):
-#        led_enter_on_off('red', 0.2)
-#        time.sleep(0.2)
-    for i in range(3):
-        led_enter_on_off('red', 0.8)
-        time.sleep(0.4)
+    redled.blink(on_time=0.8, off_time=0.4, n=3)
 
 ### END LED Management -LEDs #################################
 
 ### BUZZER Management #################################
-def buzzer_on_off(duration):
-    buzzer = Buzzer(GPIO_BUZZER)
-    buzzer.on()
-    time.sleep(duration)
-    buzzer.off()
-
 def access_granted_buzzer():
-    buzzer_on_off(0.1)
-    time.sleep(0.1)
-    buzzer_on_off(0.1)
+    buzzer.blink(on_time=0.1, off_time=0.1, n=2)
+
 
 def access_denied_buzzer():
-    for i in range(3):
-        buzzer_on_off(0.8)
-        time.sleep(0.4)
-
-def masterkey_buzzer():
-    buzzer_on_off(0.1)
-    time.sleep(0.1)
+    buzzer.blink(on_time=0.8, off_time=0.4, n=3)
 
 ### END BUZZER Management  #################################
 
@@ -325,7 +298,7 @@ def screen_draw(access):
 
 ### MAIN ###############################################
 if __name__ == '__main__':
-    
+
     tty_dev = find_serial_dev()
     if tty_dev is None:
         logging.info("No serial device found")
@@ -346,7 +319,7 @@ if __name__ == '__main__':
                     #arduino.write(cmd.encode())
                     #time.sleep(0.1) #wait for arduino to answer
                     while arduino.inWaiting()==0: pass
-                    if  arduino.inWaiting()>0: 
+                    if  arduino.inWaiting()>0:
                         answer=arduino.readline()
                         #answer=rl.readline()
                         logging.info(answer)
