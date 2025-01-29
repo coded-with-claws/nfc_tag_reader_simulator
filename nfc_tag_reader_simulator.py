@@ -29,6 +29,9 @@ if TOUCHPHAT:
 if LEDs:
     from gpiozero import LED
 
+    redled = LED(GPIO_REDLED)
+    greenled = LED(GPIO_GREENLED)
+
 if BUZZER:
     from gpiozero import Buzzer
 
@@ -48,18 +51,19 @@ ALLOWED_TAGS = ["2391729211"]  # robocop
 # POWEROFF_TAG = "3601476352" # ancienne carte poweroff autocollants non collés
 POWEROFF_TAG = "3055374848"
 
-#TAG_A = "644494848"  # tag A OLD (TESTING)
+# TAG_A = "644494848"  # tag A OLD (TESTING)
 TAG_A = "3596626688"  # tag A
-#TAG_B = "2796241408"  # tag B OLD (TESTING)
+# TAG_B = "2796241408"  # tag B OLD (TESTING)
 TAG_B = "3321902080"  # tag B
-#TAG_C = "1993159168"  # tag C OLD (TESTING)
+# TAG_C = "1993159168"  # tag C OLD (TESTING)
 TAG_C = "1183007744"  # tag C
-#TAG_D = "4137043456"  # tag D OLD (TESTING)
+# TAG_D = "4137043456"  # tag D OLD (TESTING)
 TAG_D = "649478912"  # tag D
-#TAG_E = "108286976"  # tag E OLD (TESTING)
+# TAG_E = "108286976"  # tag E OLD (TESTING)
 TAG_E = "1458001664"  # tag E
+# TAG_List = [TAG_A, TAG_B, TAG_C, TAG_D, TAG_E]  # OLD SEQUENCE (TESTING)
 TAG_List = [TAG_B, TAG_E, TAG_C, TAG_A, TAG_D]
-#TAG_SUPERVISOR = "372325632"  # tag S OLD (TESTING)
+# TAG_SUPERVISOR = "372325632"  # tag S OLD (TESTING)
 TAG_SUPERVISOR = "1717453568"  # tag S
 BOMB_CODE = "8527"
 
@@ -202,7 +206,8 @@ def get_tag_id(reader_line, n_l, status_seq):
         if OLED_SCREEN:
             if status_seq:
                 if tag == TAG_SUPERVISOR:
-                    t_screen = Thread(target=screen_draw, args=(["Congratulations", "employees", f"Code is {BOMB_CODE}"],))
+                    t_screen = Thread(target=screen_draw,
+                                      args=(["Congratulations", "employees", f"Code is {BOMB_CODE}"],))
                     t_screen.start()
                     time.sleep(5)
                 else:
@@ -244,9 +249,9 @@ def get_tag_id(reader_line, n_l, status_seq):
             t_screen.join()
 
         return tag, status_seq, n_l
-    elif match_write:
-        tag = match_write.group(1)
-        allow_tag(tag)
+    # elif match_write:
+    #     tag = match_write.group(1)
+    #     allow_tag(tag)
 
 
 def try_sequence(tag_list):
@@ -320,60 +325,32 @@ def led_enter_on_off_touchphat():
 
 
 def led_back_blink_touchphat():
-    touchphat.set_led('Back', True)
-    time.sleep(0.1)
-    touchphat.set_led('Back', False)
-    time.sleep(0.1)
-    touchphat.set_led('Back', True)
-    time.sleep(0.1)
-    touchphat.set_led('Back', False)
-    time.sleep(0.1)
-    touchphat.set_led('Back', True)
-    time.sleep(0.1)
-    touchphat.set_led('Back', False)
+    toggling_bool = False
+    for i in range(6):
+        toggling_bool = not toggling_bool
+        touchphat.set_led('Back', toggling_bool)
+        time.sleep(0.1)
 
 
 ### END LED Management - Touch pHat #################################
 
 ### LED Management -LEDs #################################
 def startup_leds():
-    led_enter_on_off('red', 1)
-    led_enter_on_off('green', 1)
-    led_enter_on_off('both', 1)
-
-
-def led_enter_on_off(leds, duration):
-    redled = LED(GPIO_REDLED)
-    greenled = LED(GPIO_GREENLED)
-    if leds in ('red', 'both'):
-        redled.on()
-    if leds in ('green', 'both'):
-        greenled.on()
-    time.sleep(duration)
-    if leds in ('red', 'both'):
-        redled.off()
-    if leds in ('green', 'both'):
-        greenled.off()
+    redled.blink(on_time=1, off_time=0.5, n=3)
+    greenled.blink(on_time=1, off_time=0.5, n=3)
 
 
 def access_granted_leds():
-    led_enter_on_off('green', 1)
+    greenled.blink(on_time=0.8, off_time=0.2, n=1)
 
 
 def access_denied_leds():
-    #    for i in range(10):
-    #        led_enter_on_off('red', 0.2)
-    #        time.sleep(0.2)
-    for i in range(3):
-        led_enter_on_off('red', 0.8)
-        time.sleep(0.4)
+    redled.blink(on_time=0.8, off_time=0.4, n=3)
 
 
 def sequence_success_leds():
-    for i in range(3):
-        # led_enter_on_off('red', 1)
-        led_enter_on_off('green', 1)
-        led_enter_on_off('both', 1)
+    redled.blink(on_time=1, off_time=0.5, n=3)
+    greenled.blink(on_time=1, off_time=0.5, n=3)
 
 
 ### END LED Management -LEDs #################################
