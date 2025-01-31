@@ -47,9 +47,7 @@ if OLED_SCREEN:
 logging.basicConfig(filename='nfc_tag_reader_simulator.log', encoding='utf-8', level=logging.DEBUG)
 
 ALLOWED_TAGS = ["1179992064", "651317760", "2391729211"] # homer autocollants collés, homer autocollants non collés, robocop
-# POWEROFF_TAG = "4007260474" # puzzle bobble
-# POWEROFF_TAG = "3601476352" # ancienne carte poweroff autocollants non collés
-POWEROFF_TAG = "3055374848"
+POWEROFF_TAG = ["3055374848", "4007260474", "3601476352"] # pince coupante autocollant, puzzle bobble, ancienne carte poweroff autocollants non collés
 COL_GREEN = "\x1b[38;5;2m"
 COL_RED = "\x1b[38;5;1m"
 COL_RESET = "\033[0m"
@@ -145,7 +143,7 @@ def allow_tag(tag):
         screen_draw(None)
 
 def validate(tag):
-    if tag == POWEROFF_TAG:
+    if tag in POWEROFF_TAG:
         poweroff()
         os.system("sudo poweroff")
         exit()
@@ -228,26 +226,28 @@ def led_back_blink_touchphat():
 
 ### LED Management -LEDs #################################
 def startup_leds():
-    redled.blink(on_time=1, off_time=0.5, n=3)
-    greenled.blink(on_time=1, off_time=0.5, n=3)
+    redled.blink(on_time=1, off_time=0.5, n=3, background=False)
+    greenled.blink(on_time=1, off_time=0.5, n=3, background=False)
 
 
 def access_granted_leds():
-    greenled.blink(on_time=0.8, off_time=0.2, n=1)
+    greenled.blink(on_time=0.8, off_time=0.2, n=1, background=False)
 
 
 def access_denied_leds():
-    redled.blink(on_time=0.8, off_time=0.4, n=3)
+    redled.blink(on_time=0.8, off_time=0.4, n=3, background=False)
 
 ### END LED Management -LEDs #################################
 
 ### BUZZER Management #################################
 def access_granted_buzzer():
-    buzzer.blink(on_time=0.1, off_time=0.1, n=2)
-
+    buzzer.blink(on_time=0.1, off_time=0.1, n=2, background=False)
 
 def access_denied_buzzer():
-    buzzer.blink(on_time=0.8, off_time=0.4, n=3)
+    buzzer.blink(on_time=0.8, off_time=0.4, n=3, background=False)
+
+def masterkey_buzzer():
+    buzzer.blink(on_time=0.1, off_time=0.1, n=1, background=False)
 
 ### END BUZZER Management  #################################
 
