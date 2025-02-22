@@ -226,16 +226,15 @@ def led_back_blink_touchphat():
 
 ### LED Management -LEDs #################################
 def startup_leds():
-    redled.blink(on_time=1, off_time=0.5, n=3, background=False)
-    greenled.blink(on_time=1, off_time=0.5, n=3, background=False)
+    redled.blink(on_time=0.3, off_time=0.3, n=2, background=False)
+    greenled.blink(on_time=0.3, off_time=0.3, n=2, background=False)
 
 
 def access_granted_leds():
-    greenled.blink(on_time=0.8, off_time=0.2, n=1, background=False)
-
+    greenled.blink(on_time=1.2, off_time=0, n=1, background=False)
 
 def access_denied_leds():
-    redled.blink(on_time=0.8, off_time=0.4, n=3, background=False)
+    redled.blink(on_time=2.4, off_time=0, n=1, background=False)
 
 ### END LED Management -LEDs #################################
 
@@ -244,10 +243,10 @@ def access_granted_buzzer():
     buzzer.blink(on_time=0.1, off_time=0.1, n=2, background=False)
 
 def access_denied_buzzer():
-    buzzer.blink(on_time=0.8, off_time=0.4, n=3, background=False)
+    buzzer.blink(on_time=0.8, off_time=0.4, n=2, background=False)
 
 def masterkey_buzzer():
-    buzzer.blink(on_time=0.1, off_time=0.1, n=1, background=False)
+    buzzer.blink(on_time=0.2, off_time=0, n=1, background=False)
 
 ### END BUZZER Management  #################################
 
@@ -322,7 +321,7 @@ if __name__ == '__main__':
                     if  arduino.inWaiting()>0:
                         answer=arduino.readline()
                         #answer=rl.readline()
-                        logging.info(answer)
+                        logging.info(f"arduino read: {answer}")
                         arduino.flushInput() #remove data after reading
                         process_rfid(answer.decode("ascii"))
             except KeyboardInterrupt:
