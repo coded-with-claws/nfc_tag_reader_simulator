@@ -48,9 +48,7 @@ if OLED_SCREEN:
 logging.basicConfig(filename='nfc_tag_reader_simulator.log', encoding='utf-8', level=logging.DEBUG)
 
 ALLOWED_TAGS = ["2391729211"]  # robocop
-# POWEROFF_TAG = "4007260474"  # puzzle bobble
-# POWEROFF_TAG = "3601476352" # ancienne carte poweroff autocollants non collés
-POWEROFF_TAG = "3055374848"
+POWEROFF_TAG = ["3055374848", "4007260474", "3601476352"] # pince coupante autocollant, puzzle bobble, ancienne carte poweroff autocollants non collés
 
 # TAG_A = "644494848"  # tag A OLD (TESTING)
 TAG_A = "3596626688"  # tag A
@@ -194,7 +192,7 @@ def get_tag_id(reader_line, n_l, status_seq):
     match_write = re.match(string=reader_line, pattern=r"w (\d+)")
     if match_process:
         tag = match_process.group(1)
-        if tag == POWEROFF_TAG:
+        if tag in POWEROFF_TAG:
             poweroff()
             os.system("sudo poweroff")
             exit()
