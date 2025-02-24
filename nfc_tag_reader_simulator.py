@@ -340,16 +340,16 @@ def startup_leds():
 
 
 def access_granted_leds():
-    greenled.blink(on_time=1.2, off_time=0, n=1, background=False)
+    greenled.blink(on_time=1, off_time=0, n=1, background=False)
 
 
 def access_denied_leds():
-    redled.blink(on_time=2.4, off_time=0, n=1, background=False)
+    redled.blink(on_time=0.8, off_time=0.4, n=3, background=False)
 
 
 def sequence_success_leds():
-    redled.blink(on_time=1, off_time=0.5, n=3, background=False)
-    greenled.blink(on_time=1, off_time=0.5, n=3, background=False)
+    greenled.blink(on_time=6, off_time=0, n=1, background=True)
+    redled.blink(on_time=1, off_time=1, n=3, background=False)
 
 
 ### END LED Management -LEDs #################################
@@ -360,7 +360,7 @@ def access_granted_buzzer():
 
 
 def access_denied_buzzer():
-    buzzer.blink(on_time=0.8, off_time=0.4, n=2, background=False)
+    buzzer.blink(on_time=0.8, off_time=0.4, n=3, background=False)
 
 
 ### END BUZZER Management  #################################
