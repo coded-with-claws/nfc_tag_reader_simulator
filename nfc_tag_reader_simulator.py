@@ -14,6 +14,11 @@ OLED_SCREEN = True
 SCREEN_WIDTH = 128
 SCREEN_HEIGHT = 64
 SCREEN_OFFSET = 4
+ALARM_DENIED_THRESHOLD_ENABLED = True
+ALARM_DENIED_THRESHOLD_VALUE = 5
+#ALARM_DENIED_THRESHOLD_VALUE = 2 # DEBUG
+ALARM_DENIED_THRESHOLD_DELAY = 60 * 5 # Unit: seconds. 5min.
+#ALARM_DENIED_THRESHOLD_DELAY = 30 # DEBUG
 ### END CONFIGURATION ##############################
 
 import logging
@@ -21,7 +26,7 @@ import os
 import serial
 import re
 import time
-from threading import Thread
+import threading
 
 if TOUCHPHAT:
     import touchphat
@@ -43,7 +48,6 @@ if OLED_SCREEN:
     oled = None
 
 
-### LOG ############################################
 logging.basicConfig(filename='nfc_tag_reader_simulator.log', encoding='utf-8', level=logging.DEBUG)
 
 ALLOWED_TAGS = ["1179992064", "651317760", "2391729211"] # homer autocollants collés, homer autocollants non collés, robocop
@@ -52,7 +56,7 @@ COL_GREEN = "\x1b[38;5;2m"
 COL_RED = "\x1b[38;5;1m"
 COL_RESET = "\033[0m"
 
-### END LOG ######################################
+DENIED_COUNTER = 0
 
 ### BOOT / POWEROFF ###########################################
 def startup():
@@ -77,6 +81,8 @@ def poweroff():
         poweroff_screen()
     if BUZZER:
         access_granted_buzzer()
+    os.system("sudo poweroff")
+    exit()
 
 ### END BOOT ######################################
 
@@ -111,10 +117,10 @@ def process_rfid(reader_line):
 def masterkey_detected():
     logging.info(f"Master key detected")
     if BUZZER:
-        t_buzz = Thread(target=masterkey_buzzer)
+        t_buzz = threading.Thread(target=masterkey_buzzer)
         t_buzz.start()
     if OLED_SCREEN:
-        t_screen = Thread(target=screen_draw, args=("ENROLL TAG",))
+        t_screen = threading.Thread(target=screen_draw, args=("ENROLL TAG",))
         t_screen.start()
     time.sleep(2)
     if BUZZER:
@@ -130,10 +136,10 @@ def allow_tag(tag):
         info_text = "ADDED TAG"
         logging.info(f"New allowed tag list: {ALLOWED_TAGS}")
     if BUZZER:
-        t_buzz = Thread(target=masterkey_buzzer)
+        t_buzz = threading.Thread(target=masterkey_buzzer)
         t_buzz.start()
     if OLED_SCREEN:
-        t_screen = Thread(target=screen_draw, args=(info_text,))
+        t_screen = threading.Thread(target=screen_draw, args=(info_text,))
         t_screen.start()
     time.sleep(2)
     if BUZZER:
@@ -145,54 +151,73 @@ def allow_tag(tag):
 def validate(tag):
     if tag in POWEROFF_TAG:
         poweroff()
-        os.system("sudo poweroff")
-        exit()
     if tag in ALLOWED_TAGS:
-        logging.info(f"{COL_GREEN}ACCESS GRANTED!{COL_RESET}")
-        if TOUCHPHAT:
-            access_granted_touchphat()
-        if LEDs:
-            t_led = Thread(target=access_granted_leds)
-            t_led.start()
-        if BUZZER:
-            t_buzz = Thread(target=access_granted_buzzer)
-            t_buzz.start()
-        if OLED_SCREEN:
-            t_screen = Thread(target=screen_draw, args=("GRANTED",))
-            t_screen.start()
-        if LEDs:
-            t_led.join()
-        if BUZZER:
-            t_buzz.join()
-        if OLED_SCREEN:
-            t_screen.join()
-            # wait some time to read the screen in case there was no LED / Buzzer management
-            if not LEDs and not BUZZER:
-                time.sleep(3)
-            screen_draw(None)
+        handle_tag_granted()
     else:
-        logging.info(f"{COL_RED}ACCESS DENIED!{COL_RESET}")
-        if TOUCHPHAT:
-            access_denied_touchphat()
-        if LEDs:
-            t_led = Thread(target=access_denied_leds)
-            t_led.start()
-        if BUZZER:
-            t_buzz = Thread(target=access_denied_buzzer)
-            t_buzz.start()
-        if OLED_SCREEN:
-            t_screen = Thread(target=screen_draw, args=("DENIED",))
-            t_screen.start()
-        if LEDs:
-            t_led.join()
-        if BUZZER:
-            t_buzz.join()
-        if OLED_SCREEN:
-            t_screen.join()
-            # wait some time to read the screen in case there was no LED / Buzzer management
-            if not LEDs and not BUZZER:
-                time.sleep(3)
-            screen_draw(None)
+        handle_tag_denied()
+
+def handle_tag_granted():
+    global DENIED_COUNTER
+    logging.info(f"{COL_GREEN}ACCESS GRANTED!{COL_RESET}")
+    DENIED_COUNTER = 0
+    cancel_all_denied_threshold_timers()
+    if TOUCHPHAT:
+        access_granted_touchphat()
+    if LEDs:
+        t_led = threading.Thread(target=access_granted_leds)
+        t_led.start()
+    if BUZZER:
+        t_buzz = threading.Thread(target=access_granted_buzzer)
+        t_buzz.start()
+    if OLED_SCREEN:
+        t_screen = threading.Thread(target=screen_draw, args=("GRANTED",))
+        t_screen.start()
+    if LEDs:
+        t_led.join()
+    if BUZZER:
+        t_buzz.join()
+    if OLED_SCREEN:
+        t_screen.join()
+        # wait some time to read the screen in case there was no LED / Buzzer management
+        if not LEDs and not BUZZER:
+            time.sleep(3)
+        screen_draw(None)
+
+def handle_tag_denied():
+    global DENIED_COUNTER
+    logging.info(f"{COL_RED}ACCESS DENIED!{COL_RESET}")
+    DENIED_COUNTER += 1
+    logging.info(f"{COL_RED}denied counter = {DENIED_COUNTER}{COL_RESET}")
+    t = threading.Timer(ALARM_DENIED_THRESHOLD_DELAY, handle_alarm_denied_threshold_timer_end)
+    t.start()
+    if TOUCHPHAT:
+        access_denied_touchphat()
+    if LEDs:
+        t_led = threading.Thread(target=access_denied_leds)
+        t_led.start()
+    if BUZZER:
+        t_buzz = threading.Thread(target=access_denied_buzzer)
+        t_buzz.start()
+    if OLED_SCREEN:
+        t_screen = threading.Thread(target=screen_draw, args=("DENIED",))
+        t_screen.start()
+    if LEDs:
+        t_led.join()
+    if BUZZER:
+        t_buzz.join()
+    if OLED_SCREEN:
+        t_screen.join()
+        # wait some time to read the screen in case there was no LED / Buzzer management
+        if not LEDs and not BUZZER:
+            time.sleep(3)
+        screen_draw(None)
+
+def analyze_alarms():
+    global DENIED_COUNTER
+    if ALARM_DENIED_THRESHOLD_ENABLED:
+        if DENIED_COUNTER >= ALARM_DENIED_THRESHOLD_VALUE:
+            display_alarm_denied_threshold()
+            DENIED_COUNTER = 0
 
 ### END Tag Management #################################
 
@@ -229,16 +254,38 @@ def startup_leds():
     redled.blink(on_time=0.3, off_time=0.3, n=2, background=False)
     greenled.blink(on_time=0.3, off_time=0.3, n=2, background=False)
 
-
 def access_granted_leds():
     greenled.blink(on_time=1.2, off_time=0, n=1, background=False)
 
 def access_denied_leds():
     redled.blink(on_time=2.4, off_time=0, n=1, background=False)
 
+def alarm_denied_threshold_leds():
+    redled.blink(on_time=0.3, off_time=0.2, n=15, background=False)
+
 ### END LED Management -LEDs #################################
 
 ### BUZZER Management #################################
+def buzz(pitch, duration):
+    '''
+    Cause the buzzer to produce a buzz according to a pitch in a note frequency number (Hz)
+    for a duration in seconds.
+    To produce a C4 note for half a second.
+    >>> buzz(261.63, 0.5)
+    Source: https://github.com/fongkahchun86/gpiozero_pwm_buzzer/blob/master/gpiozero_pwm_buzzer.py
+    '''
+    if pitch == 0:
+        time.sleep(duration)
+        return
+    period = 1.0 / pitch #in physics, the period (sec/cyc) is the inverse of the frequency (cyc/sec)
+    delay = period / 2 #calculate the time for half of the wave
+    cycles = int(round(duration * pitch, 0)) #the number of waves to produce is the duration times the frequency
+    for i in range(cycles):
+        buzzer.on()
+        time.sleep(delay)
+        buzzer.off()
+        time.sleep(delay)
+
 def access_granted_buzzer():
     buzzer.blink(on_time=0.1, off_time=0.1, n=2, background=False)
 
@@ -247,6 +294,17 @@ def access_denied_buzzer():
 
 def masterkey_buzzer():
     buzzer.blink(on_time=0.2, off_time=0, n=1, background=False)
+
+def alarm_denied_threshold_buzzer():
+    # https://en.wikipedia.org/wiki/Scientific_pitch_notation#Table_of_note_frequencies
+    note_B4 = 493.88
+    note_C5 = 523.25
+    note_C4 = 261.63
+    for i in range(3):
+        #buzz(note_B4, 0.5)
+        buzz(note_C5, 0.5)
+        buzz(note_C4, 1)
+        time.sleep(1)
 
 ### END BUZZER Management  #################################
 
@@ -295,6 +353,45 @@ def screen_draw(access):
 
 ### END SCREEN Management  #################################
 
+### ALARMS Management #################################
+def cancel_all_denied_threshold_timers():
+    for t in threading.enumerate():
+        if t.name != "MainThread":
+            t.cancel()
+
+def handle_alarm_denied_threshold_timer_end():
+    global DENIED_COUNTER
+    logging.info(f"{COL_GREEN}ALARM: one denied attempt expired (counter = {DENIED_COUNTER}){COL_RESET}")
+    if DENIED_COUNTER > 0:
+        DENIED_COUNTER -= 1
+        logging.info(f"{COL_GREEN}ALARM: denied counter = {DENIED_COUNTER}{COL_RESET}")
+
+def display_alarm_denied_threshold():
+    logging.info(f"{COL_RED}ALARM: DENIED THRESHOLD REACHED!{COL_RESET}")
+    if TOUCHPHAT:
+        access_denied_touchphat()
+    if LEDs:
+        t_led = threading.Thread(target=alarm_denied_threshold_leds)
+        t_led.start()
+    if BUZZER:
+        t_buzz = threading.Thread(target=alarm_denied_threshold_buzzer)
+        t_buzz.start()
+    if OLED_SCREEN:
+        t_screen = threading.Thread(target=screen_draw, args=("ALARM",))
+        t_screen.start()
+    if LEDs:
+        t_led.join()
+    if BUZZER:
+        t_buzz.join()
+    if OLED_SCREEN:
+        t_screen.join()
+        # wait some time to read the screen in case there was no LED / Buzzer management
+        if not LEDs and not BUZZER:
+            time.sleep(3)
+        screen_draw(None)
+
+### END ALARMS Management  #################################
+
 ### MAIN ###############################################
 if __name__ == '__main__':
 
@@ -324,8 +421,10 @@ if __name__ == '__main__':
                         logging.info(f"arduino read: {answer}")
                         arduino.flushInput() #remove data after reading
                         process_rfid(answer.decode("ascii"))
+                        analyze_alarms()
             except KeyboardInterrupt:
                 logging.info("KeyboardInterrupt has been caught.")
+                cancel_all_denied_threshold_timers()
                 if OLED_SCREEN:
                     screen_empty()
 
