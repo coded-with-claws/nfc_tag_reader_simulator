@@ -3,6 +3,11 @@
 
 <img src="https://github.com/coded-with-claws/nfc_tag_reader_simulator/blob/main/Electronics/Fritzing/POC_tag_reader.gif" />
 
+## Features
+- grants or denies tags depending on UID
+- can enroll dynamically a new tag (becoming granted)
+- alarms after 3 fails in 5 minutes (configurable)
+
 ## Pre-requisite
 
 ### Pi Zero
