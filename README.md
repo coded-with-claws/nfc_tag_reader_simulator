@@ -12,7 +12,7 @@
 
 ### Pi Zero
 
-Raspberry Pi OS Debian 11.
+Raspberry Pi OS Debian 11+.
 
 As user `pi`:
 ```shell
@@ -31,9 +31,11 @@ sudo apt-get install python3-smbus
 sudo pip install -r requirements.txt
 ```
 
-### Arduino
+### Arduino (Nano) + NFC module
 
-Flash `nfc_module/nfc_module.ino`
+#### MFRC522
+
+Flash `nfc_module/nfc_module.ino` if you have an Arduino + MFRC522
 (based on https://github.com/ElRojo/MiSTerRFID/blob/main/arduino/misterrfid.ino)
 
 Change the value of `WRITE_TAG` if you want to have a master key to authorize additional tags.
@@ -61,6 +63,10 @@ arduino-cli compile -b arduino:avr:nano nfc_module/
 arduino-cli upload -b arduino:avr:nano --port /dev/ttyUSB0 nfc_module/
 => Check that it displays "New upload port: /dev/ttyUSB0 (serial)"
 ```
+
+#### PN532
+
+Flash `nfc_module_pn532/nfc_module_pn532.ino` if you have an Arduino + PN532.
 
 ## Crontab
 ```shell
