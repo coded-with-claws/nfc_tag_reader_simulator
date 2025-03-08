@@ -8,6 +8,9 @@
 - can enroll dynamically a new tag (becoming granted)
 - alarms after 3 fails in 5 minutes (configurable)
 
+### Ideas of future features
+- online verification (use wifi to call an HTTP API to get the decision for the UID read)
+
 ## Pre-requisite
 
 ### Pi Zero
@@ -67,6 +70,7 @@ arduino-cli upload -b arduino:avr:nano --port /dev/ttyUSB0 nfc_module/
 #### PN532
 
 Flash `nfc_module_pn532/nfc_module_pn532.ino` if you have an Arduino + PN532.
+Note: the PN532 libraries used were committed into this project because they included messages printed on serial port, which would break our code reading the serial.
 
 ## Crontab
 ```shell
