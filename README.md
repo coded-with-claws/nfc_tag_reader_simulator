@@ -34,6 +34,11 @@ sudo apt-get install python3-smbus
 sudo pip install -r requirements.txt
 ```
 
+Additional since Debian 12:
+```shell
+sudo apt install libopenjp2-7
+```
+
 ### Arduino (Nano) + NFC module
 
 #### MFRC522
