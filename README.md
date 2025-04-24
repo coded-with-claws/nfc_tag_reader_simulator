@@ -10,7 +10,6 @@
 
 ### Ideas of future features
 - online verification (use wifi to call an HTTP API to get the decision for the UID read)
-- different signals (led, sound) between startup, poweroff and tag read
 - host a Web GUI providing poweroff, adding/removing a tag
 
 ## Pre-requisite
