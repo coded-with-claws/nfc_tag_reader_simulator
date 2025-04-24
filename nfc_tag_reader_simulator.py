@@ -50,8 +50,8 @@ if OLED_SCREEN:
 
 logging.basicConfig(filename='nfc_tag_reader_simulator.log', encoding='utf-8', level=logging.DEBUG)
 
-ALLOWED_TAGS = ["1179992064", "651317760", "2391729211"] # homer autocollants collés, homer autocollants non collés, robocop
-POWEROFF_TAG = ["3055374848", "4007260474", "3601476352"] # pince coupante autocollant, puzzle bobble, ancienne carte poweroff autocollants non collés
+ALLOWED_TAGS = ["1179992064", "870653101"] # homer autocollants collés, carte labdemo granted
+POWEROFF_TAG = ["3055374848", "4076058393"] # pince coupante autocollant, carte labdemo poweroff
 COL_GREEN = "\x1b[38;5;2m"
 COL_RED = "\x1b[38;5;1m"
 COL_RESET = "\033[0m"
@@ -69,20 +69,24 @@ def startup():
         startup_screen()
         screen_draw(None)
     if BUZZER:
-        access_granted_buzzer()
+        startup_buzzer()
 
 def poweroff():
     if TOUCHPHAT:
         led_enter_on_off_touchphat()
         led_back_blink_touchphat()
     if LEDs:
-        startup_leds()
+        poweroff_leds()
     if OLED_SCREEN:
         poweroff_screen()
     if BUZZER:
-        access_granted_buzzer()
+        poweroff_buzzer()
     os.system("sudo poweroff")
-    exit()
+    t = ""
+    while True:
+        t += "."
+        screen_draw(t)
+        time.sleep(0.5)
 
 ### END BOOT ######################################
 
@@ -251,8 +255,12 @@ def led_back_blink_touchphat():
 
 ### LED Management -LEDs #################################
 def startup_leds():
-    redled.blink(on_time=0.3, off_time=0.3, n=2, background=False)
-    greenled.blink(on_time=0.3, off_time=0.3, n=2, background=False)
+    redled.blink(on_time=0.2, off_time=0.2, n=5, background=True)
+    time.sleep(0.2)
+    greenled.blink(on_time=0.2, off_time=0.2, n=5, background=True)
+
+def poweroff_leds():
+    redled.blink(on_time=0.2, off_time=0.2, n=4, background=True)
 
 def access_granted_leds():
     greenled.blink(on_time=1.2, off_time=0, n=1, background=False)
@@ -266,6 +274,13 @@ def alarm_denied_threshold_leds():
 ### END LED Management -LEDs #################################
 
 ### BUZZER Management #################################
+note_B4 = 493.88
+note_B5 = 987.77
+note_C5 = 523.25
+note_C4 = 261.63
+note_C3 = 130.81
+note_C2 = 65.40
+
 def buzz(pitch, duration):
     '''
     Cause the buzzer to produce a buzz according to a pitch in a note frequency number (Hz)
@@ -286,6 +301,15 @@ def buzz(pitch, duration):
         buzzer.off()
         time.sleep(delay)
 
+def startup_buzzer():
+    #buzzer.blink(on_time=0.1, off_time=0.5, n=3, background=False)
+    buzz(note_B4, 0.5)
+    buzz(note_B5, 0.5)
+
+def poweroff_buzzer():
+    buzz(note_C2, 0.5)
+    buzz(note_C3, 0.5)
+
 def access_granted_buzzer():
     buzzer.blink(on_time=0.1, off_time=0.1, n=2, background=False)
 
@@ -297,9 +321,6 @@ def masterkey_buzzer():
 
 def alarm_denied_threshold_buzzer():
     # https://en.wikipedia.org/wiki/Scientific_pitch_notation#Table_of_note_frequencies
-    note_B4 = 493.88
-    note_C5 = 523.25
-    note_C4 = 261.63
     for i in range(3):
         #buzz(note_B4, 0.5)
         buzz(note_C5, 0.5)
